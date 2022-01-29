@@ -1,6 +1,6 @@
-package de.iqwrwq.server;
+package de.iqwrwq.server.objects;
 
-import de.iqwrwq.client.Cargo;
+import de.iqwrwq.server.objects.Cargo;
 
 public class Ship {
 

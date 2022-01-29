@@ -1,10 +1,8 @@
 package de.iqwrwq.server;
 
-import de.iqwrwq.client.Cargo;
 import de.iqwrwq.core.Kernel;
 import de.iqwrwq.ui.Command;
 import de.iqwrwq.ui.CommunicationHandler;
-import de.iqwrwq.ui.req;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -65,6 +63,5 @@ public abstract class ShipHandler extends Thread {
 
     public abstract void removeShip() throws IOException;
 
-
-
+    public abstract String getInfo();
 }

@@ -1,4 +1,4 @@
-package de.iqwrwq.server;
+package de.iqwrwq.server.objects;
 
 import de.iqwrwq.config.Config;
 

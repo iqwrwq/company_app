@@ -1,7 +1,9 @@
 package de.iqwrwq.server;
 
-import de.iqwrwq.client.Cargo;
 import de.iqwrwq.core.Kernel;
+import de.iqwrwq.server.objects.Cargo;
+import de.iqwrwq.server.objects.Harbour;
+import de.iqwrwq.server.objects.Harbours;
 import de.iqwrwq.ui.CommunicationHandler;
 import de.iqwrwq.ui.req;
 

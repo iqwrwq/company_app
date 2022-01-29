@@ -2,6 +2,7 @@ package de.iqwrwq.client;
 
 import de.iqwrwq.config.Config;
 import de.iqwrwq.core.Kernel;
+import de.iqwrwq.server.objects.Cargo;
 import de.iqwrwq.ui.CommunicationHandler;
 import de.iqwrwq.ui.req;
 
@@ -109,28 +110,32 @@ public class Company extends Thread {
                 }
                 case "newCargo" -> {
                     Cargo cargo = new Cargo(serverAnswer);
-                    communicationHandler.notifyApp("addedCargo" + req.DIVIDER + cargo.id);
-                    core.shipServer.cargos.add(cargo);
+                    addCargo(cargo, "addedCargo");
                 }
                 case "cargo" -> {
                     Cargo suspectedNewCargo = new Cargo(serverAnswer);
-
-                    for (Cargo cargo : core.shipServer.cargos) {
-                        if (cargo.id == suspectedNewCargo.id){
-
+                    if (core.shipServer.cargos.isEmpty()){
+                        addCargo(suspectedNewCargo, "addedUnknownCargo");
+                    }else{
+                        for (Cargo cargo : core.shipServer.cargos) {
+                            if (cargo.id == suspectedNewCargo.id) {
+                                return;
+                            }
                         }
-                    }
-                    
-                    if (!core.shipServer.cargos.contains(suspectedNewCargo)) {
-                        communicationHandler.notifyApp("addedUnknownCargo" + req.DIVIDER + suspectedNewCargo.id);
-                        core.shipServer.cargos.add(suspectedNewCargo);
+                        addCargo(suspectedNewCargo, "addedUnknownCargo");
                     }
                 }
+                case "endinfo" -> {}
                 default -> {
                     communicationHandler.notifyApp("unhandledRequestAbove", "\u001B[33m");
                 }
             }
         }
+    }
+
+    private void addCargo(Cargo suspectedNewCargo, String addedUnknownCargo) {
+        communicationHandler.notifyApp(addedUnknownCargo + req.DIVIDER + suspectedNewCargo.id);
+        core.shipServer.cargos.add(suspectedNewCargo);
     }
 
     /**
