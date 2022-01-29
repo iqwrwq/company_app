@@ -1,6 +1,9 @@
-package de.iqwrwq.core;
+package de.iqwrwq.client;
 
 import de.iqwrwq.config.Config;
+import de.iqwrwq.core.Kernel;
+import de.iqwrwq.ui.CommunicationHandler;
+import de.iqwrwq.ui.req;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,9 +20,9 @@ public class Company extends Thread {
     private Socket seaTradeSocket;
     private int estate = DEFAULT_COMPANY_ESTATE;
     private CommunicationHandler communicationHandler;
-    private final Core core;
+    private final Kernel core;
 
-    public Company(Core core) {
+    public Company(Kernel core) {
         this.core = core;
         this.config = core.config;
         this.companyName = config.companyName;
@@ -90,7 +93,6 @@ public class Company extends Thread {
         while (!seaTradeSocket.isClosed()) {
             handleSeaTradeRequest(bufferedReader);
         }
-        Core.keepChatWatching = false;
     }
 
     private void handleSeaTradeRequest(BufferedReader bufferedReader) throws IOException {

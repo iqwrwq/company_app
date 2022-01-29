@@ -1,15 +1,19 @@
-package de.iqwrwq.core;
+package de.iqwrwq.ui;
+
+import de.iqwrwq.client.Company;
+import de.iqwrwq.core.Kernel;
+import de.iqwrwq.server.ShipServer;
 
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
 public class CommandUserInterface extends Thread {
 
-    private final Core core;
+    private final Kernel core;
     private final ShipServer shipServer;
     private final Company company;
 
-    public CommandUserInterface(Core core) {
+    public CommandUserInterface(Kernel core) {
         this.core = core;
         this.company = core.company;
         this.shipServer = core.shipServer;

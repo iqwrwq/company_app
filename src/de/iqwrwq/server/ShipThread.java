@@ -1,18 +1,26 @@
-package de.iqwrwq.core;
+package de.iqwrwq.server;
 
-import java.io.*;
+import de.iqwrwq.client.Cargo;
+import de.iqwrwq.core.Kernel;
+import de.iqwrwq.ui.CommunicationHandler;
+import de.iqwrwq.ui.req;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
 
 public class ShipThread extends Thread {
 
     public CommunicationHandler communicationHandler;
-    public String harbour;
+    public Object harbour;
     public Cargo cargo;
     private final int id;
     private final Socket socket;
-    private final Core core;
+    private final Kernel core;
 
-    public ShipThread(int id, Socket socket, Core core) {
+    public ShipThread(int id, Socket socket, Kernel core) {
         this.id = id;
         this.socket = socket;
         this.core = core;

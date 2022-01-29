@@ -1,12 +1,12 @@
-package de.iqwrwq.core;
+package de.iqwrwq.client;
 
 import java.util.regex.Pattern;
 
 public class Cargo {
     public String toString;
-    public int id;
     public String source;
     public String destination;
+    public int id;
     public int value;
 
     public Cargo(String information){

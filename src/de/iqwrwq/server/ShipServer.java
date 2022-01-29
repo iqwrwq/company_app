@@ -1,6 +1,9 @@
-package de.iqwrwq.core;
+package de.iqwrwq.server;
 
-import de.iqwrwq.config.Config;
+import de.iqwrwq.client.Cargo;
+import de.iqwrwq.core.Kernel;
+import de.iqwrwq.ui.CommunicationHandler;
+import de.iqwrwq.ui.req;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -8,60 +11,41 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.regex.Pattern;
 
 
-public class ShipServer extends Thread {
+public class ShipServer extends Server {
 
     private static final String INSTANCE_NAME = "ShipServer";
 
     volatile public ArrayList<Cargo> cargos = new ArrayList<Cargo>();
     public final HashMap<Integer, ShipThread> shipConnectionMap = new HashMap<>();
 
-    private final Core core;
-    private final int port;
+    private final Kernel core;
     private final int maxShips;
-    private final ArrayList<String> harbours;
-    private ServerSocket serverSocket;
+    private final Harbours harbours;
     private CommunicationHandler communicationHandler;
     private int currentShips;
 
-    public ShipServer(Core core) {
-        Config config = core.config;
+    public ShipServer(Kernel core) {
+        super(core.config);
 
         this.core = core;
-        this.port = config.shipServerPort;
-        this.maxShips = config.maxShips;
+        this.maxShips = core.config.maxShips;
         this.currentShips = 0;
-        this.harbours = new ArrayList<String>(Arrays.asList(
-                "halifax",
-                "new york",
-                "carracas",
-                "ryekjavik",
-                "plymouth",
-                "brest",
-                "algier",
-                "lissabon",
-                "dakar",
-                "cotonau"
-        ));
+        this.harbours = new Harbours(core.config);
     }
 
-    @Override
-    public void run() {
-        try {
-            this.serverSocket = new ServerSocket(port);
-            CommunicationHandler.forceMessage(INSTANCE_NAME, "Started" + req.DIVIDER + "Port" + req.SEPARATOR + port);
-            while (!serverSocket.isClosed()) {
-                handleUpcomingShipConnections(serverSocket);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            CommunicationHandler.forceMessage(INSTANCE_NAME, "ServerShutDown" + req.DIVIDER + "✔", "\u001B[31m");
+    protected void process() throws IOException {
+        while (!serverSocket.isClosed()) {
+            handleUpcomingShipConnections(serverSocket);
         }
+    }
+
+    protected void connect() throws IOException {
+        this.serverSocket = new ServerSocket(port);
+        CommunicationHandler.forceMessage(INSTANCE_NAME, "Started" + req.DIVIDER + "Port" + req.SEPARATOR + port);
     }
 
     public void move(int id, String to) {
@@ -82,7 +66,7 @@ public class ShipServer extends Thread {
         }
     }
 
-    public String getHarbour() {
+    public Object getHarbour() {
         int index = (int) (Math.random() * harbours.size());
         return this.harbours.get(index);
     }

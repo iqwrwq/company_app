@@ -1,16 +1,17 @@
 package de.iqwrwq.core;
 
+import de.iqwrwq.client.Company;
 import de.iqwrwq.config.Config;
+import de.iqwrwq.server.ShipServer;
+import de.iqwrwq.ui.CommandUserInterface;
 
-public class Core{
-
-    public static boolean keepChatWatching = true;
+public class Kernel{
     public final Config config;
     public final Company company;
     public final ShipServer shipServer;
     public final CommandUserInterface userInterface;
 
-    public Core() {
+    public Kernel() {
         this.config = new Config("config/config.properties");
         this.company = new Company(this);
         this.shipServer = new ShipServer(this);
@@ -24,7 +25,8 @@ public class Core{
     }
 
     public static void main(String[] args) {
-        Core core = new Core();
+        Kernel core = new Kernel();
         core.boot();
     }
+
 }

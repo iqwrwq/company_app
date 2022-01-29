@@ -1,4 +1,4 @@
-package de.iqwrwq.core;
+package de.iqwrwq.ui;
 
 import java.io.PrintWriter;
 
@@ -42,11 +42,5 @@ public class CommunicationHandler {
     }
 
 
-}
-
-class req {
-    public static final String DIVIDER = " | ";
-    public static final String SEPARATOR = " -> ";
-    public static final String RESET = "\u001B[0m";
 }
 
