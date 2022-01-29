@@ -39,7 +39,7 @@ public class Company extends Thread {
             } catch (IOException e) {
                 tryReconnection();
             } finally {
-                communicationHandler.notifyApp("ApplicationEnded" + req.DIVIDER + "✔", "\u001B[31m");
+                communicationHandler.notifyApp("ApplicationEnded" + req.DIVIDER + "✔", "\u001B[33m");
             }
         }
     }
@@ -105,7 +105,7 @@ public class Company extends Thread {
             switch (serverAnswer.split(":")[0]) {
                 case "registered" -> {
                     setEstate(Integer.parseInt(serverAnswer.split(":")[2]));
-                    communicationHandler.notifyApp("registeredOnSeaTrade");
+                    communicationHandler.notifyApp("registeredOnSeaTrade" + req.DIVIDER + "Port" + req.SEPARATOR + config.port,  "\u001B[32m");
                 }
                 case "newCargo" -> {
                     Cargo cargo = new Cargo(serverAnswer);
@@ -114,6 +114,13 @@ public class Company extends Thread {
                 }
                 case "cargo" -> {
                     Cargo suspectedNewCargo = new Cargo(serverAnswer);
+
+                    for (Cargo cargo : core.shipServer.cargos) {
+                        if (cargo.id == suspectedNewCargo.id){
+
+                        }
+                    }
+                    
                     if (!core.shipServer.cargos.contains(suspectedNewCargo)) {
                         communicationHandler.notifyApp("addedUnknownCargo" + req.DIVIDER + suspectedNewCargo.id);
                         core.shipServer.cargos.add(suspectedNewCargo);

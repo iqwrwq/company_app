@@ -12,14 +12,4 @@ public class Harbours extends ArrayList<Harbour>{
     }
 }
 
-class Harbour{
-    public String name;
-    public ArrayList<Ship> ships;
-
-    public Harbour(String name){
-        this.name = name;
-        this.ships = new ArrayList<Ship>();
-    }
-}
-
 

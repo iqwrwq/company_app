@@ -24,7 +24,7 @@ public abstract class Server extends Thread{
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            CommunicationHandler.forceMessage(this.getClass().getName(), "ServerShutDown" + req.DIVIDER + "✔", "\u001B[31m");
+            CommunicationHandler.forceMessage(this.getClass().getName(), "ServerShutDown" + req.DIVIDER + "✔", "\u001B[33m");
         }
     }
 

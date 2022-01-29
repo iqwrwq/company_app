@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 
 public class ShipServer extends Server {
 
-    private static final String INSTANCE_NAME = "ShipServer";
+    public static final String INSTANCE_NAME = "ShipServer";
 
     volatile public ArrayList<Cargo> cargos = new ArrayList<Cargo>();
     public final HashMap<Integer, ShipThread> shipConnectionMap = new HashMap<>();
@@ -45,15 +45,17 @@ public class ShipServer extends Server {
 
     protected void connect() throws IOException {
         this.serverSocket = new ServerSocket(port);
-        CommunicationHandler.forceMessage(INSTANCE_NAME, "Started" + req.DIVIDER + "Port" + req.SEPARATOR + port);
+        CommunicationHandler.forceMessage(INSTANCE_NAME, "Started" + req.DIVIDER + "Port" + req.SEPARATOR + port, "\u001B[32m");
     }
 
     public void move(int id, String to) {
-        if (harbours.contains(to)) {
-            shipConnectionMap.get(id).communicationHandler.notifyServer("move" + req.SEPARATOR + to);
-        } else {
-            System.out.println("Error" + req.DIVIDER + "NoSuchHarbour");
+        for (Harbour harbour : harbours) {
+            if (harbour.name.equals(to)) {
+                shipConnectionMap.get(id).communicationHandler.notifyServer("move" + req.SEPARATOR + to);
+                return;
+            }
         }
+        CommunicationHandler.forceMessage(INSTANCE_NAME, "Error" + req.SEPARATOR + "NoSuchHarbour", "\u001B[31m");
     }
 
     public void load(String cmd) {
@@ -66,7 +68,7 @@ public class ShipServer extends Server {
         }
     }
 
-    public Object getHarbour() {
+    public Harbour getHarbour() {
         int index = (int) (Math.random() * harbours.size());
         return this.harbours.get(index);
     }

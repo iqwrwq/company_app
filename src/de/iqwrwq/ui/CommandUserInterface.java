@@ -36,7 +36,7 @@ public class CommandUserInterface extends Thread {
                 if (command.split(Pattern.quote(" ")).length >= 2) {
                     core.shipServer.shipConnectionMap.get(Integer.parseInt(command.split(Pattern.quote(" "))[1])).communicationHandler.notifyServer("cargoinfo");
                 } else {
-                    System.out.println(core.company.companyName + req.SEPARATOR + "SeaTrade" + req.SEPARATOR + "getCargoInfo");
+                    CommunicationHandler.forceMessage(core.company.companyName,"SeaTrade" + req.SEPARATOR + "getCargoInfo");
                     core.company.sendRequestToSeaTrade("getinfo:cargo");
                 }
             }
@@ -63,9 +63,14 @@ public class CommandUserInterface extends Thread {
                 core.shipServer.shipConnectionMap.get(Integer.parseInt(command.split(Pattern.quote(" "))[1])).communicationHandler.notifyServer("unload");
             }
             case "ships" -> {
-                core.shipServer.shipConnectionMap.forEach((id, cargo) -> {
-                    System.out.println(cargo.getInfo());
-                });
+                if (!core.shipServer.shipConnectionMap.isEmpty()){
+                    core.shipServer.shipConnectionMap.forEach((id, cargo) -> {
+                        System.out.println("cargosinfo");
+                    });
+                }else{
+                    CommunicationHandler.forceMessage(ShipServer.INSTANCE_NAME, "Error" + req.SEPARATOR + "CurrentlyNoShips", "\033[33m");
+                }
+
             }
         }
     }
