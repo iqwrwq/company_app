@@ -2,6 +2,7 @@ package de.iqwrwq.client;
 
 import de.iqwrwq.config.Config;
 import de.iqwrwq.core.Kernel;
+import de.iqwrwq.server.objects.Cargo;
 import de.iqwrwq.ui.CommunicationHandler;
 import de.iqwrwq.ui.req;
 
@@ -39,7 +40,7 @@ public class Company extends Thread {
             } catch (IOException e) {
                 tryReconnection();
             } finally {
-                communicationHandler.notifyApp("ApplicationEnded" + req.DIVIDER + "✔", "\u001B[31m");
+                communicationHandler.notifyApp("ApplicationEnded" + req.DIVIDER + "✔", "\u001B[33m");
             }
         }
     }
@@ -105,25 +106,36 @@ public class Company extends Thread {
             switch (serverAnswer.split(":")[0]) {
                 case "registered" -> {
                     setEstate(Integer.parseInt(serverAnswer.split(":")[2]));
-                    communicationHandler.notifyApp("registeredOnSeaTrade");
+                    communicationHandler.notifyApp("registeredOnSeaTrade" + req.DIVIDER + "Port" + req.SEPARATOR + config.port,  "\u001B[32m");
                 }
                 case "newCargo" -> {
                     Cargo cargo = new Cargo(serverAnswer);
-                    communicationHandler.notifyApp("addedCargo" + req.DIVIDER + cargo.id);
-                    core.shipServer.cargos.add(cargo);
+                    addCargo(cargo, "addedCargo");
                 }
                 case "cargo" -> {
                     Cargo suspectedNewCargo = new Cargo(serverAnswer);
-                    if (!core.shipServer.cargos.contains(suspectedNewCargo)) {
-                        communicationHandler.notifyApp("addedUnknownCargo" + req.DIVIDER + suspectedNewCargo.id);
-                        core.shipServer.cargos.add(suspectedNewCargo);
+                    if (core.shipServer.cargos.isEmpty()){
+                        addCargo(suspectedNewCargo, "addedUnknownCargo");
+                    }else{
+                        for (Cargo cargo : core.shipServer.cargos) {
+                            if (cargo.id == suspectedNewCargo.id) {
+                                return;
+                            }
+                        }
+                        addCargo(suspectedNewCargo, "addedUnknownCargo");
                     }
                 }
+                case "endinfo" -> {}
                 default -> {
                     communicationHandler.notifyApp("unhandledRequestAbove", "\u001B[33m");
                 }
             }
         }
+    }
+
+    private void addCargo(Cargo suspectedNewCargo, String addedUnknownCargo) {
+        communicationHandler.notifyApp(addedUnknownCargo + req.DIVIDER + suspectedNewCargo.id);
+        core.shipServer.cargos.add(suspectedNewCargo);
     }
 
     /**

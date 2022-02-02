@@ -1,29 +1,26 @@
 package de.iqwrwq.server;
 
-import de.iqwrwq.client.Cargo;
 import de.iqwrwq.core.Kernel;
+import de.iqwrwq.server.objects.Cargo;
+import de.iqwrwq.server.objects.Harbour;
+import de.iqwrwq.ui.Command;
 import de.iqwrwq.ui.CommunicationHandler;
 import de.iqwrwq.ui.req;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-public class ShipThread extends Thread {
+public class ShipThread extends ShipHandler {
 
-    public CommunicationHandler communicationHandler;
-    public Object harbour;
+    public Harbour harbour;
     public Cargo cargo;
     private final int id;
-    private final Socket socket;
-    private final Kernel core;
+    public CommunicationHandler communicationHandler;
 
     public ShipThread(int id, Socket socket, Kernel core) {
+        super(socket, core);
         this.id = id;
-        this.socket = socket;
-        this.core = core;
         try {
             this.communicationHandler = new CommunicationHandler("Ship" + req.DIVIDER + id, new PrintWriter(socket.getOutputStream(), true));
         } catch (IOException e) {
@@ -31,50 +28,31 @@ public class ShipThread extends Thread {
         }
     }
 
-    public void run() {
-        try {
-            shipCommunication();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    @Override
+    public void registerShip(Command registerShip) {
+        this.harbour = core.shipServer.getHarbour();
+        communicationHandler.notifyServer("registered" + req.SEPARATOR + id + req.DIVIDER + harbour.name + req.DIVIDER + core.company.companyName);
     }
 
-    public String getInfo(){
-        return "Ship" + req.DIVIDER + id + req.DIVIDER + harbour;
+    @Override
+    public void chargeCompany(Command chargeCompany) {
+        int chargeIndex = 2;
+        core.company.setEstate(Integer.parseInt(chargeCompany.arguments.get(chargeIndex)));
     }
 
-    private void shipCommunication() throws IOException {
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        String shipRequest;
-        while (!socket.isClosed()) {
-            while (bufferedReader.ready()) {
-                shipRequest = bufferedReader.readLine();
-                System.out.println("Ship | " + id + " -> " + shipRequest);
-                switch (shipRequest.split(" -> ")[0]) {
-                    case "register" -> {
-                        this.harbour = core.shipServer.getHarbour();
-                        communicationHandler.notifyServer("registered" + req.SEPARATOR + id + req.DIVIDER + harbour + req.DIVIDER + core.company.companyName);
-                    }
-                    case "charge" -> {
-                        core.company.setEstate(-Integer.parseInt(shipRequest.split(" -> ")[1]));
-                    }
-                    case "loaded" -> {
-                        this.cargo = new Cargo(shipRequest.split(" -> ")[1]);
-                    }
-                    case "remove" -> {
-                        removeShip();
-                    }
-                    default -> {
-                    }
-                }
-            }
-        }
-        System.out.println("ShipServer -> ThreadClosed | " + id);
+    @Override
+    public void setCargo(Command setCargo) {
+        int cargoIndex = 1;
+        this.cargo = new Cargo(setCargo.arguments.get(cargoIndex));
     }
 
-    private void removeShip() throws IOException {
-        System.out.println("ShipServer -> removed -> " + id);
-        communicationHandler.notifyServer("removed -> " + id);
+    @Override
+    public void removeShip() throws IOException {
         socket.close();
+    }
+
+    @Override
+    public String getInfo() {
+        return "Ship" + id + req.DIVIDER + (cargo == null ? "-" : cargo.id) + req.DIVIDER + harbour.name;
     }
 }

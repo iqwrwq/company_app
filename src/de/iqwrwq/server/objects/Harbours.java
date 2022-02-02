@@ -1,4 +1,4 @@
-package de.iqwrwq.server;
+package de.iqwrwq.server.objects;
 
 import de.iqwrwq.config.Config;
 
@@ -9,16 +9,6 @@ public class Harbours extends ArrayList<Harbour>{
 
     public Harbours(Config config) {
         super(Arrays.asList(Arrays.stream(config.harbours).map(Harbour::new).toArray(Harbour[]::new)));
-    }
-}
-
-class Harbour{
-    public String name;
-    public ArrayList<Ship> ships;
-
-    public Harbour(String name){
-        this.name = name;
-        this.ships = new ArrayList<Ship>();
     }
 }
 
