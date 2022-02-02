@@ -4,6 +4,7 @@ import de.iqwrwq.client.Company;
 import de.iqwrwq.core.Kernel;
 import de.iqwrwq.server.ShipServer;
 import de.iqwrwq.server.ShipThread;
+import de.iqwrwq.server.objects.Harbour;
 import de.iqwrwq.server.objects.Ship;
 
 import java.util.HashMap;
@@ -40,6 +41,8 @@ public class CommandUserInterface extends Thread {
             case "load" -> loadShip(command);
             case "unload" -> shipServerRequired(command, "unload");
             case "ships" -> listAllShips();
+            case "estate" -> printEstate();
+            case "harbours" -> listHarbours();
         }
     }
 
@@ -51,7 +54,7 @@ public class CommandUserInterface extends Thread {
             shipServerRequired(command, "cargoinfo");
         } else {
             CommunicationHandler.forceMessage(core.company.companyName, "SeaTrade" + req.SEPARATOR + "getCargoInfo");
-            core.company.sendRequestToSeaTrade("getinfo:cargo");
+            core.company.communicationHandler.notifyServer("getinfo:cargo");
         }
     }
 
@@ -104,6 +107,16 @@ public class CommandUserInterface extends Thread {
                     "Error" + req.SEPARATOR + "CurrentlyNoShips",
                     "\033[33m"
             );
+        }
+    }
+
+    private void printEstate() {
+        core.company.communicationHandler.notifyApp(String.valueOf(core.company.estate));
+    }
+
+    private void listHarbours() {
+        for(Harbour harbour : core.shipServer.harbours){
+            System.out.print(harbour.name + req.DIVIDER);
         }
     }
 

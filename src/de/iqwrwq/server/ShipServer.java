@@ -23,11 +23,11 @@ public class ShipServer extends Server {
 
     volatile public ArrayList<Cargo> cargos = new ArrayList<Cargo>();
     public final HashMap<Integer, ShipThread> shipConnectionMap = new HashMap<>();
+    public CommunicationHandler communicationHandler;
+    public final Harbours harbours;
 
     private final Kernel core;
     private final int maxShips;
-    private final Harbours harbours;
-    private CommunicationHandler communicationHandler;
     private int currentShips;
 
     public ShipServer(Kernel core) {

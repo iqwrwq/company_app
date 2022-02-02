@@ -1,6 +1,5 @@
 package de.iqwrwq.client;
 
-import de.iqwrwq.config.Config;
 import de.iqwrwq.core.Kernel;
 import de.iqwrwq.server.objects.Cargo;
 import de.iqwrwq.ui.CommunicationHandler;
@@ -10,50 +9,82 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.Socket;
 
-public class Company extends Thread {
+public class Company extends Client {
 
-    private static final int DEFAULT_COMPANY_ESTATE = 0;
 
     public String companyName;
-    protected Config config;
-    private Socket seaTradeSocket;
-    private int estate = DEFAULT_COMPANY_ESTATE;
-    private CommunicationHandler communicationHandler;
-    private final Kernel core;
+    public int estate;
+    public CommunicationHandler communicationHandler;
 
     public Company(Kernel core) {
-        this.core = core;
-        this.config = core.config;
-        this.companyName = config.companyName;
+        super(core);
+        this.companyName = core.config.companyName;
     }
 
     @Override
-    public void run() {
-        int allowedConnectionAttempts = Integer.parseInt(config.getProperty("ConnectionAttempts"));
-        for (int connectionAttempt = 0; connectionAttempt <= allowedConnectionAttempts; connectionAttempt++) {
-            try {
-                this.seaTradeSocket = connectToSeaTradeServer();
-                seaTradeCommunication();
-                break;
-            } catch (IOException e) {
-                tryReconnection();
-            } finally {
-                communicationHandler.notifyApp("ApplicationEnded" + req.DIVIDER + "✔", "\u001B[33m");
-            }
+    protected void process() throws IOException {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(toServerSocket.getInputStream()));
+
+        while (!toServerSocket.isClosed()) {
+            readAndHandSeaTradeRequest(bufferedReader);
         }
     }
 
-    public void sendRequestToSeaTrade(String req) {
-        communicationHandler.notifyServer(req);
+    private void readAndHandSeaTradeRequest(BufferedReader bufferedReader) throws IOException {
+        String serverAnswer;
+
+        while (bufferedReader.ready()) {
+            serverAnswer = bufferedReader.readLine();
+            communicationHandler.notifyApp(serverAnswer);
+            handle(serverAnswer);
+        }
     }
 
-    private void tryReconnection() {
+    @Override
+    protected void handle(String request) {
+        switch (request.split(":")[0]) {
+            case "registered" -> {
+                setEstate(Integer.parseInt(request.split(":")[2]));
+                communicationHandler.notifyApp("registeredOnSeaTrade" + req.DIVIDER + "Port" + req.SEPARATOR + core.config.port, "\u001B[32m");
+            }
+            case "newCargo" -> {
+                Cargo cargo = new Cargo(request);
+                addCargo(cargo, "addedCargo");
+            }
+            case "cargo" -> listCargos(request);
+            default -> communicationHandler.notifyApp("unhandledRequestAbove", "\u001B[33m");
+        }
+    }
+
+    private void listCargos(String request) {
+        Cargo suspectedNewCargo = new Cargo(request);
+        if (!core.shipServer.cargos.isEmpty()) {
+            for (Cargo cargo : core.shipServer.cargos) {
+                if (cargo.id == suspectedNewCargo.id) {
+                    return;
+                }
+            }
+        }
+        addCargo(suspectedNewCargo, "addedUnknownCargo");
+    }
+
+    @Override
+    protected void register() throws IOException {
+        String rc = randomCompany();
+
+        this.communicationHandler = new CommunicationHandler(rc, new PrintWriter(toServerSocket.getOutputStream(), true));
+        communicationHandler.notifyApp("SeaTradeConnection" + req.DIVIDER + "Port" + req.SEPARATOR + core.config.port);
+        communicationHandler.notifyServer("register:" + rc);
+        this.companyName = rc;
+    }
+
+    @Override
+    protected void reconnect() {
         try {
             CommunicationHandler.forceMessage(companyName, "Error" + req.SEPARATOR + "ConnectionRefused");
-            CommunicationHandler.forceMessage(companyName, "RetryAfterWait" + req.DIVIDER + config.getProperty("ReconnectionTimeGap"));
-            sleep(Integer.parseInt(config.getProperty("ReconnectionTimeGap")));
+            CommunicationHandler.forceMessage(companyName, "RetryAfterWait" + req.DIVIDER + core.config.getProperty("ReconnectionTimeGap"));
+            sleep(Integer.parseInt(core.config.getProperty("ReconnectionTimeGap")));
             CommunicationHandler.forceMessage(companyName, "RetryConnection");
         } catch (InterruptedException ex) {
             ex.printStackTrace();
@@ -62,74 +93,15 @@ public class Company extends Thread {
 
     public void setEstate(int amount) {
         this.estate += amount;
-        System.out.println(companyName + req.DIVIDER + "estate" + req.DIVIDER + estate);
+        System.out.println(companyName + req.DIVIDER + "setEstate" + req.DIVIDER + amount + req.SEPARATOR + estate);
     }
 
     public void exit() {
         try {
             communicationHandler.notifyAll("exit");
-            this.seaTradeSocket.close();
+            this.toServerSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    private Socket connectToSeaTradeServer() throws IOException {
-        Socket seaTradeSocket = new Socket(config.host, config.port);
-
-        this.communicationHandler = new CommunicationHandler(companyName, new PrintWriter(seaTradeSocket.getOutputStream(), true));
-        communicationHandler.notifyApp("SeaTradeConnection" + req.DIVIDER + "Port" + req.SEPARATOR + config.port);
-
-        String rc = randomCompany();
-        communicationHandler.notifyServer("register:" + rc);
-        this.companyName = rc;
-        //communicationHandler.notifyServer("register:" + config.companyName);
-
-        return seaTradeSocket;
-    }
-
-    private void seaTradeCommunication() throws IOException {
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(seaTradeSocket.getInputStream()));
-
-        while (!seaTradeSocket.isClosed()) {
-            handleSeaTradeRequest(bufferedReader);
-        }
-    }
-
-    private void handleSeaTradeRequest(BufferedReader bufferedReader) throws IOException {
-        String serverAnswer;
-
-        while (bufferedReader.ready()) {
-            serverAnswer = bufferedReader.readLine();
-            communicationHandler.notifyApp(serverAnswer);
-
-            switch (serverAnswer.split(":")[0]) {
-                case "registered" -> {
-                    setEstate(Integer.parseInt(serverAnswer.split(":")[2]));
-                    communicationHandler.notifyApp("registeredOnSeaTrade" + req.DIVIDER + "Port" + req.SEPARATOR + config.port,  "\u001B[32m");
-                }
-                case "newCargo" -> {
-                    Cargo cargo = new Cargo(serverAnswer);
-                    addCargo(cargo, "addedCargo");
-                }
-                case "cargo" -> {
-                    Cargo suspectedNewCargo = new Cargo(serverAnswer);
-                    if (core.shipServer.cargos.isEmpty()){
-                        addCargo(suspectedNewCargo, "addedUnknownCargo");
-                    }else{
-                        for (Cargo cargo : core.shipServer.cargos) {
-                            if (cargo.id == suspectedNewCargo.id) {
-                                return;
-                            }
-                        }
-                        addCargo(suspectedNewCargo, "addedUnknownCargo");
-                    }
-                }
-                case "endinfo" -> {}
-                default -> {
-                    communicationHandler.notifyApp("unhandledRequestAbove", "\u001B[33m");
-                }
-            }
         }
     }
 
@@ -138,11 +110,8 @@ public class Company extends Thread {
         core.shipServer.cargos.add(suspectedNewCargo);
     }
 
-    /**
-     * to refactor after Dev
-     */
     private String randomCompany() {
-        return config.companyName + (int) (Math.random() * (999 - 1 + 1) + 1);
+        return core.config.companyName + (int) (Math.random() * (999 - 1 + 1) + 1);
     }
 
 }
