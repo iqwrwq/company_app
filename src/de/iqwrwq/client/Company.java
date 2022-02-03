@@ -52,7 +52,7 @@ public class Company extends Client {
             }
             case "newCargo" -> {
                 Cargo cargo = new Cargo(request);
-                addCargo(cargo, "addedCargo");
+                addCargo(cargo);
                 for (Harbour harbour : core.shipServer.harbours){
                     if (harbour.name.equals(cargo.source.name)){
                         harbour.cargos.add(cargo);
@@ -73,7 +73,7 @@ public class Company extends Client {
                 }
             }
         }
-        addCargo(suspectedNewCargo, "addedUnknownCargo");
+        addCargo(suspectedNewCargo);
     }
 
     @Override
@@ -117,8 +117,7 @@ public class Company extends Client {
         }
     }
 
-    private void addCargo(@NotNull Cargo suspectedNewCargo, String addedUnknownCargo) {
-        communicationHandler.notifyApp(addedUnknownCargo + req.DIVIDER + suspectedNewCargo.id);
+    private void addCargo(@NotNull Cargo suspectedNewCargo) {
         core.shipServer.cargos.add(suspectedNewCargo);
     }
 

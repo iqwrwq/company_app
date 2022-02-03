@@ -26,6 +26,7 @@ public abstract class Client extends Thread {
         try {
             launch();
         } catch (IOException e) {
+            System.out.println("error");
             reconnect();
         } finally {
             CommunicationHandler.forceMessage(this.getClass().getName(), "ConnectionToSeaTradeEnded" + req.DIVIDER + "✔", "\u001B[33m");
@@ -35,9 +36,11 @@ public abstract class Client extends Thread {
     private void launch() throws IOException {
         int maxConnectionAttempts = Integer.parseInt(core.config.getProperty("ConnectionAttempts"));
         for (int connectionAttempt = 0; connectionAttempt <= maxConnectionAttempts; connectionAttempt++) {
-            this.toServerSocket = connect();
-            register();
-            process();
+            if (toServerSocket == null) {
+                this.toServerSocket = connect();
+                register();
+                process();
+            }
         }
     }
 

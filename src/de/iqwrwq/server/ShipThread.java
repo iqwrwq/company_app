@@ -46,8 +46,8 @@ public class ShipThread extends ShipHandler {
     @Override
     public void setCargo(@NotNull Command setCargo) {
         int cargoIndex = 2;
-
         this.cargo = new Cargo(setCargo.arguments.get(cargoIndex));
+        communicationHandler.notifyApp("loadedCargo" + req.SEPARATOR + cargo.getObjString());
     }
 
     @Override
@@ -72,6 +72,7 @@ public class ShipThread extends ShipHandler {
                 harbour.ships.add(this);
             }
         }
+        communicationHandler.notifyApp("reachedAndSetHarbour" + req.SEPARATOR + harbour.name);
     }
 
     @Override
