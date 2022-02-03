@@ -4,12 +4,13 @@ import de.iqwrwq.client.Company;
 import de.iqwrwq.config.Config;
 import de.iqwrwq.server.ShipServer;
 import de.iqwrwq.ui.CommandUserInterface;
+import org.jetbrains.annotations.NotNull;
 
 public class Kernel{
-    public final Config config;
-    public final Company company;
-    public final ShipServer shipServer;
-    public final CommandUserInterface userInterface;
+    public final @NotNull Config config;
+    public final @NotNull Company company;
+    public final @NotNull ShipServer shipServer;
+    public final @NotNull CommandUserInterface userInterface;
 
     public Kernel() {
         this.config = new Config("config/config.properties");

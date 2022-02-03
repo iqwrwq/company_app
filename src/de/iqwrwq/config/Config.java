@@ -1,5 +1,7 @@
 package de.iqwrwq.config;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
@@ -13,7 +15,7 @@ public class Config extends Properties {
     public int maxShips;
     public String[] harbours;
 
-    public Config(String path) {
+    public Config(@NotNull String path) {
         try {
             this.load(new FileReader(path));
             this.host = getProperty("host");

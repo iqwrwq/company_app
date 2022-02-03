@@ -4,6 +4,7 @@ import de.iqwrwq.core.Kernel;
 import de.iqwrwq.server.objects.Cargo;
 import de.iqwrwq.ui.CommunicationHandler;
 import de.iqwrwq.ui.req;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,7 +18,7 @@ public class Company extends Client {
     public int estate;
     public CommunicationHandler communicationHandler;
 
-    public Company(Kernel core) {
+    public Company(@NotNull Kernel core) {
         super(core);
         this.companyName = core.config.companyName;
     }
@@ -41,7 +42,7 @@ public class Company extends Client {
     }
 
     @Override
-    protected void handle(String request) {
+    protected void handle(@NotNull String request) {
         switch (request.split(":")[0]) {
             case "registered" -> {
                 setEstate(Integer.parseInt(request.split(":")[2]));
@@ -56,7 +57,7 @@ public class Company extends Client {
         }
     }
 
-    private void listCargos(String request) {
+    private void listCargos(@NotNull String request) {
         Cargo suspectedNewCargo = new Cargo(request);
         if (!core.shipServer.cargos.isEmpty()) {
             for (Cargo cargo : core.shipServer.cargos) {
@@ -104,7 +105,7 @@ public class Company extends Client {
         }
     }
 
-    private void addCargo(Cargo suspectedNewCargo, String addedUnknownCargo) {
+    private void addCargo(@NotNull Cargo suspectedNewCargo, String addedUnknownCargo) {
         communicationHandler.notifyApp(addedUnknownCargo + req.DIVIDER + suspectedNewCargo.id);
         core.shipServer.cargos.add(suspectedNewCargo);
     }
@@ -113,7 +114,7 @@ public class Company extends Client {
      * @implSpec for Dev
      * @return Random ship
      */
-    private String randomCompany() {
+    private @NotNull String randomCompany() {
         return core.config.companyName + (int) (Math.random() * (999 - 1 + 1) + 1);
     }
 

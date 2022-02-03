@@ -3,18 +3,19 @@ package de.iqwrwq.client;
 import de.iqwrwq.core.Kernel;
 import de.iqwrwq.ui.CommunicationHandler;
 import de.iqwrwq.ui.req;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.net.Socket;
 
 public abstract class Client extends Thread {
 
-    protected final Kernel core;
+    protected final @NotNull Kernel core;
     protected Socket toServerSocket;
     private final String toServerIp;
     private final int toServerPort;
 
-    public Client(Kernel core) {
+    public Client(@NotNull Kernel core) {
         this.core = core;
         this.toServerIp = core.config.host;
         this.toServerPort = core.config.port;
@@ -40,7 +41,7 @@ public abstract class Client extends Thread {
         }
     }
 
-    private Socket connect() throws IOException {
+    private @NotNull Socket connect() throws IOException {
         return new Socket(toServerIp, toServerPort);
     }
 

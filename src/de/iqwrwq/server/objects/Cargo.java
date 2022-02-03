@@ -1,6 +1,6 @@
 package de.iqwrwq.server.objects;
 
-import de.iqwrwq.ui.Command;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Pattern;
 
@@ -10,7 +10,7 @@ public class Cargo {
     public Harbour destination;
     public int value;
 
-    public Cargo(String cargo){
+    public Cargo(@NotNull String cargo){
         int id = 1;
         int source_harbour = 2;
         int dest_harbour = 3;

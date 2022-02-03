@@ -1,26 +1,28 @@
 package de.iqwrwq.ui;
 
+import com.bethecoder.ascii_table.ASCIITable;
 import de.iqwrwq.client.Company;
 import de.iqwrwq.core.Kernel;
 import de.iqwrwq.server.ShipServer;
 import de.iqwrwq.server.ShipThread;
 import de.iqwrwq.server.objects.Harbour;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Pattern;
 
 public class CommandUserInterface extends UserInterface {
 
-    private final Kernel core;
+    private final @NotNull Kernel core;
     private final ShipServer shipServer;
     private final Company company;
 
-    public CommandUserInterface(Kernel core) {
+    public CommandUserInterface(@NotNull Kernel core) {
         this.core = core;
         this.company = core.company;
         this.shipServer = core.shipServer;
     }
 
-    protected void handleCommand(String command) {
+    protected void handleCommand(@NotNull String command) {
         switch (command.split(" ")[0]) {
             case "cargo" -> listCargo(command);
             case "move" -> moveShip(command);
@@ -32,7 +34,7 @@ public class CommandUserInterface extends UserInterface {
         }
     }
 
-    private void listCargo(String command) {
+    private void listCargo(@NotNull String command) {
         String[] cargoCommand = command.split(Pattern.quote(" "));
         int specificCargoCommandLength = 2;
 
@@ -44,7 +46,7 @@ public class CommandUserInterface extends UserInterface {
         }
     }
 
-    private void moveShip(String command) {
+    private void moveShip(@NotNull String command) {
         String[] moveCommand = command.split(Pattern.quote(" "));
         int moveCommandValidationLength = 2;
 
@@ -59,7 +61,7 @@ public class CommandUserInterface extends UserInterface {
         }
     }
 
-    private void loadShip(String command) {
+    private void loadShip(@NotNull String command) {
         String[] loadCommand = command.split(Pattern.quote(" "));
         int loadCommandValidationLength = 2;
 
@@ -74,7 +76,7 @@ public class CommandUserInterface extends UserInterface {
         }
     }
 
-    private void shipServerRequired(String command, String request) {
+    private void shipServerRequired(@NotNull String command, String request) {
         int shipId = Integer.parseInt(command.split(Pattern.quote(" "))[1]);
         ShipThread shipThread = core.shipServer.shipConnectionMap.get(shipId);
 
@@ -83,10 +85,18 @@ public class CommandUserInterface extends UserInterface {
 
     private void listAllShips() {
         if (!core.shipServer.shipConnectionMap.isEmpty()) {
+            String[] tableHeaders = {"Name", "ID", "Cargo", "Harbour"};
+            String[][] tableData = new String[core.shipServer.shipConnectionMap.size()][];
+            var Referral = new Object() {
+                int counter = 0;
+            };
+
             core.shipServer.shipConnectionMap.forEach((id, shipThread) -> {
-                CommunicationHandler.forceMessage(
-                        ShipServer.INSTANCE_NAME, shipThread.getInfo());
+                tableData[Referral.counter] = shipThread.getInfo();
+                Referral.counter++;
             });
+            ASCIITable.getInstance().printTable(tableHeaders, tableData);
+
         } else {
             CommunicationHandler.forceMessage(
                     ShipServer.INSTANCE_NAME,
@@ -101,6 +111,18 @@ public class CommandUserInterface extends UserInterface {
     }
 
     private void listHarbours() {
+        String[] tableHeaders = {"Name", "ID", "Cargo", "Harbour"};
+        String[][] tableData = new String[core.shipServer.shipConnectionMap.size()][];
+        var Referral = new Object() {
+            int counter = 0;
+        };
+
+        core.shipServer.harbours.forEach((harbour) -> {
+            //tableData[Referral.counter];
+            Referral.counter++;
+        });
+        ASCIITable.getInstance().printTable(tableHeaders, tableData);
+
         for(Harbour harbour : core.shipServer.harbours){
             System.out.print(harbour.name + req.DIVIDER);
         }

@@ -1,7 +1,5 @@
 package de.iqwrwq.server.objects;
 
-import de.iqwrwq.server.objects.Cargo;
-
 public class Ship {
 
     public int id;
@@ -12,14 +10,4 @@ public class Ship {
         this.id = id;
         this.name = name;
     }
-
-    public void setCargo(Cargo cargo){
-        this.cargo = cargo;
-    }
-
-    public Cargo getCargo(){
-        return cargo;
-    }
-
-
 }

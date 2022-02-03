@@ -8,6 +8,10 @@ public class Harbour {
 
     public Harbour(String name) {
         this.name = name;
-        this.ships = new ArrayList<Ship>();
+        this.ships = new ArrayList<>();
+    }
+
+    public String[] getInfo(){
+        return null;
     }
 }

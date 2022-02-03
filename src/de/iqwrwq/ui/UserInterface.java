@@ -1,7 +1,5 @@
 package de.iqwrwq.ui;
 
-import de.iqwrwq.core.Kernel;
-
 import java.util.Scanner;
 
 public abstract class UserInterface extends Thread {
