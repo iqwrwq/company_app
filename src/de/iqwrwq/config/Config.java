@@ -1,9 +1,9 @@
 package de.iqwrwq.config;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.util.HashMap;
 import java.util.Properties;
 
 public class Config extends Properties {
@@ -14,8 +14,9 @@ public class Config extends Properties {
     public String companyName;
     public int maxShips;
     public String[] harbours;
+    public boolean massMove;
 
-    public Config(String path) {
+    public Config(@NotNull String path) {
         try {
             this.load(new FileReader(path));
             this.host = getProperty("host");
@@ -24,6 +25,7 @@ public class Config extends Properties {
             this.companyName = getProperty("companyName");
             this.maxShips =  getProperty("maxShipsAllowed").isEmpty() ? 999 : Integer.parseInt(getProperty("maxShipsAllowed"));
             this.harbours = getProperty("harbours").split(",");
+            this.massMove = Boolean.parseBoolean(getProperty("massMove"));
         } catch (IOException e) {
             e.printStackTrace();
         }

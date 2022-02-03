@@ -2,7 +2,7 @@ package de.iqwrwq.server;
 
 import de.iqwrwq.core.Kernel;
 import de.iqwrwq.ui.Command;
-import de.iqwrwq.ui.CommunicationHandler;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,8 +12,6 @@ import java.util.regex.Pattern;
 
 public abstract class ShipHandler extends Thread {
 
-
-    public CommunicationHandler communicationHandler;
     protected Socket socket;
     protected Kernel core;
 
@@ -49,7 +47,9 @@ public abstract class ShipHandler extends Thread {
                 case "register" -> registerShip(shipRequest);
                 case "charge" -> chargeCompany(shipRequest);
                 case "loaded" -> setCargo(shipRequest);
+                case "unload" -> unloadCargo();
                 case "remove" -> removeShip();
+                case "reach" -> setHarbour(shipRequest);
                 default -> {}
             }
         }
@@ -61,7 +61,11 @@ public abstract class ShipHandler extends Thread {
 
     public abstract void setCargo(Command setCargo);
 
+    public abstract void unloadCargo();
+
     public abstract void removeShip() throws IOException;
 
-    public abstract String getInfo();
+    public abstract void setHarbour(Command setHarbour);
+
+    public abstract @NotNull String[] getInfo();
 }

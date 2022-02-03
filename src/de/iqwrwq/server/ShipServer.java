@@ -6,6 +6,8 @@ import de.iqwrwq.server.objects.Harbour;
 import de.iqwrwq.server.objects.Harbours;
 import de.iqwrwq.ui.CommunicationHandler;
 import de.iqwrwq.ui.req;
+import org.jetbrains.annotations.NotNull;
+import org.tinylog.Logger;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -21,16 +23,15 @@ public class ShipServer extends Server {
 
     public static final String INSTANCE_NAME = "ShipServer";
 
-    volatile public ArrayList<Cargo> cargos = new ArrayList<Cargo>();
+    volatile public @NotNull ArrayList<Cargo> cargos = new ArrayList<>();
     public final HashMap<Integer, ShipThread> shipConnectionMap = new HashMap<>();
+    public final @NotNull Harbours harbours;
 
-    private final Kernel core;
+    private final @NotNull Kernel core;
     private final int maxShips;
-    private final Harbours harbours;
-    private CommunicationHandler communicationHandler;
     private int currentShips;
 
-    public ShipServer(Kernel core) {
+    public ShipServer(@NotNull Kernel core) {
         super(core.config);
 
         this.core = core;
@@ -39,12 +40,14 @@ public class ShipServer extends Server {
         this.harbours = new Harbours(core.config);
     }
 
+    @Override
     protected void process() throws IOException {
         while (!serverSocket.isClosed()) {
             handleUpcomingShipConnections(serverSocket);
         }
     }
 
+    @Override
     protected void connect() throws IOException {
         this.serverSocket = new ServerSocket(port);
         CommunicationHandler.forceMessage(INSTANCE_NAME, "Started" + req.DIVIDER + "Port" + req.SEPARATOR + port, "\u001B[32m");
@@ -60,7 +63,7 @@ public class ShipServer extends Server {
         CommunicationHandler.forceMessage(INSTANCE_NAME, "Error" + req.SEPARATOR + "NoSuchHarbour", "\u001B[31m");
     }
 
-    public void load(String cmd) {
+    public void load(@NotNull String cmd) {
         String[] cmd_parts = cmd.split(Pattern.quote(" "));
         ShipThread targetShip = shipConnectionMap.get(Integer.parseInt(cmd_parts[1]));
         if (cmd_parts.length >= 3) {
@@ -75,18 +78,19 @@ public class ShipServer extends Server {
         return this.harbours.get(index);
     }
 
+    @Override
     public void exit() {
         try {
-            shipConnectionMap.forEach((id, ship) -> {
-                ship.communicationHandler.notifyAll("removed");
-            });
+            shipConnectionMap.forEach((id, ship) -> ship.communicationHandler.notifyAll("removed"));
             serverSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
+        }finally {
+            Logger.info("ShipServer closed");
         }
     }
 
-    private void handleUpcomingShipConnections(ServerSocket serverSocket) throws IOException {
+    private void handleUpcomingShipConnections(@NotNull ServerSocket serverSocket) throws IOException {
         try {
             Socket shipSocket = serverSocket.accept();
             CommunicationHandler communicationHandler = new CommunicationHandler(INSTANCE_NAME, new PrintWriter(shipSocket.getOutputStream(), true));
@@ -100,7 +104,7 @@ public class ShipServer extends Server {
         }
     }
 
-    private void startShipThread(Socket shipSocket, CommunicationHandler communicationHandler) {
+    private void startShipThread(Socket shipSocket, @NotNull CommunicationHandler communicationHandler) {
         int shipId = generateId();
         currentShips++;
 
