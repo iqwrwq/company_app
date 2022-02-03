@@ -5,13 +5,10 @@ import de.iqwrwq.core.Kernel;
 import de.iqwrwq.server.ShipServer;
 import de.iqwrwq.server.ShipThread;
 import de.iqwrwq.server.objects.Harbour;
-import de.iqwrwq.server.objects.Ship;
 
-import java.util.HashMap;
-import java.util.Scanner;
 import java.util.regex.Pattern;
 
-public class CommandUserInterface extends Thread {
+public class CommandUserInterface extends UserInterface {
 
     private final Kernel core;
     private final ShipServer shipServer;
@@ -23,18 +20,7 @@ public class CommandUserInterface extends Thread {
         this.shipServer = core.shipServer;
     }
 
-    @Override
-    public void run() {
-        Scanner scanner = new Scanner(System.in);
-        String userInput;
-        do {
-            userInput = scanner.nextLine();
-            handleCommand(userInput);
-        } while (!userInput.equalsIgnoreCase("exit"));
-        endApplication();
-    }
-
-    private void handleCommand(String command) {
+    protected void handleCommand(String command) {
         switch (command.split(" ")[0]) {
             case "cargo" -> listCargo(command);
             case "move" -> moveShip(command);
@@ -120,7 +106,7 @@ public class CommandUserInterface extends Thread {
         }
     }
 
-    private void endApplication() {
+    protected void endApplication() {
         company.exit();
         shipServer.exit();
     }

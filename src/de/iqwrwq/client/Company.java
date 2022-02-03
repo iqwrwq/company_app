@@ -24,14 +24,13 @@ public class Company extends Client {
 
     @Override
     protected void process() throws IOException {
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(toServerSocket.getInputStream()));
-
         while (!toServerSocket.isClosed()) {
-            readAndHandSeaTradeRequest(bufferedReader);
+            readAndSendSeaTradeRequest();
         }
     }
 
-    private void readAndHandSeaTradeRequest(BufferedReader bufferedReader) throws IOException {
+    private void readAndSendSeaTradeRequest() throws IOException {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(toServerSocket.getInputStream()));
         String serverAnswer;
 
         while (bufferedReader.ready()) {
@@ -71,12 +70,12 @@ public class Company extends Client {
 
     @Override
     protected void register() throws IOException {
-        String rc = randomCompany();
+        String randomCompany = randomCompany();
 
-        this.communicationHandler = new CommunicationHandler(rc, new PrintWriter(toServerSocket.getOutputStream(), true));
+        this.communicationHandler = new CommunicationHandler(randomCompany, new PrintWriter(toServerSocket.getOutputStream(), true));
         communicationHandler.notifyApp("SeaTradeConnection" + req.DIVIDER + "Port" + req.SEPARATOR + core.config.port);
-        communicationHandler.notifyServer("register:" + rc);
-        this.companyName = rc;
+        communicationHandler.notifyServer("register:" + randomCompany);
+        this.companyName = randomCompany;
     }
 
     @Override
@@ -110,6 +109,10 @@ public class Company extends Client {
         core.shipServer.cargos.add(suspectedNewCargo);
     }
 
+    /**
+     * @implSpec for Dev
+     * @return Random ship
+     */
     private String randomCompany() {
         return core.config.companyName + (int) (Math.random() * (999 - 1 + 1) + 1);
     }
