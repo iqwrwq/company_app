@@ -5,8 +5,10 @@ import de.iqwrwq.client.Company;
 import de.iqwrwq.core.Kernel;
 import de.iqwrwq.server.ShipServer;
 import de.iqwrwq.server.ShipThread;
+import de.iqwrwq.server.objects.Cargo;
 import de.iqwrwq.server.objects.Harbour;
 import org.jetbrains.annotations.NotNull;
+import org.tinylog.Logger;
 
 import java.util.regex.Pattern;
 
@@ -24,26 +26,31 @@ public class CommandUserInterface extends UserInterface {
 
     protected void handleCommand(@NotNull String command) {
         switch (command.split(" ")[0]) {
-            case "cargo" -> listCargo(command);
+            case "cargos" -> listCargo(command);
             case "move" -> moveShip(command);
             case "load" -> loadShip(command);
             case "unload" -> shipServerRequired(command, "unload");
             case "ships" -> listAllShips();
             case "estate" -> printEstate();
             case "harbours" -> listHarbours();
+            case "massmove" -> massMove();
+            case "massunload" -> massUnload();
+            default -> System.out.println("Error" + req.SEPARATOR + "UnhandledCommand");
         }
     }
 
     private void listCargo(@NotNull String command) {
-        String[] cargoCommand = command.split(Pattern.quote(" "));
-        int specificCargoCommandLength = 2;
+        String[] tableHeaders = {"ID", "Source Harbour", "Destination Harbour", "Value"};
+        String[][] tableData = new String[core.shipServer.cargos.size()][];
+        var Referral = new Object() {
+            int counter = 0;
+        };
 
-        if (cargoCommand.length >= specificCargoCommandLength) {
-            shipServerRequired(command, "cargoinfo");
-        } else {
-            CommunicationHandler.forceMessage(core.company.companyName, "SeaTrade" + req.SEPARATOR + "getCargoInfo");
-            core.company.communicationHandler.notifyServer("getinfo:cargo");
-        }
+        core.shipServer.cargos.forEach((cargo) -> {
+            tableData[Referral.counter] = cargo.getInfo();
+            Referral.counter++;
+        });
+        ASCIITable.getInstance().printTable(tableHeaders, tableData);
     }
 
     private void moveShip(@NotNull String command) {
@@ -111,25 +118,57 @@ public class CommandUserInterface extends UserInterface {
     }
 
     private void listHarbours() {
-        String[] tableHeaders = {"Name", "ID", "Cargo", "Harbour"};
-        String[][] tableData = new String[core.shipServer.shipConnectionMap.size()][];
+        String[] tableHeaders = {"Name", "Ships", "Cargos"};
+        String[][] tableData = new String[core.shipServer.harbours.size()][];
         var Referral = new Object() {
             int counter = 0;
         };
 
         core.shipServer.harbours.forEach((harbour) -> {
-            //tableData[Referral.counter];
+            tableData[Referral.counter] = harbour.getInfo();
             Referral.counter++;
         });
         ASCIITable.getInstance().printTable(tableHeaders, tableData);
+    }
 
-        for(Harbour harbour : core.shipServer.harbours){
-            System.out.print(harbour.name + req.DIVIDER);
+    private void massMove() {
+        if (core.config.massMove) {
+            shipServer.shipConnectionMap.forEach((id, shipThread) -> {
+                if (shipThread.cargo == null) {
+                    for (Cargo cargo : shipServer.cargos) {
+                        if(cargo.source.name.equals(shipThread.harbour.name)){
+                            shipThread.cargo = cargo;
+                            shipThread.communicationHandler.notifyServer("load");
+                            shipThread.communicationHandler.notifyServer("move" + req.SEPARATOR + cargo.destination.name);
+                            return;
+                        }
+                    }
+                }else{
+                    shipThread.communicationHandler.notifyServer("move" + req.SEPARATOR + shipThread.cargo.destination.name);
+                }
+            });
+        } else {
+            CommunicationHandler.forceMessage(ShipServer.INSTANCE_NAME, "massMoveDeactivated");
+        }
+    }
+
+    private void massUnload(){
+        if (core.config.massMove) {
+            shipServer.shipConnectionMap.forEach((id, shipThread) -> {
+                if (shipThread.cargo.destination.name.equals(shipThread.harbour.name)) {
+                            shipThread.communicationHandler.notifyServer("unload");
+                }else{
+                    shipThread.communicationHandler.notifyServer("move" + req.SEPARATOR + shipThread.cargo.destination);
+                }
+            });
+        } else {
+            CommunicationHandler.forceMessage(ShipServer.INSTANCE_NAME, "massMoveDeactivated");
         }
     }
 
     protected void endApplication() {
         company.exit();
         shipServer.exit();
+        Logger.info("Interface exited");
     }
 }

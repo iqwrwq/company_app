@@ -7,6 +7,7 @@ import de.iqwrwq.server.objects.Harbours;
 import de.iqwrwq.ui.CommunicationHandler;
 import de.iqwrwq.ui.req;
 import org.jetbrains.annotations.NotNull;
+import org.tinylog.Logger;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -84,6 +85,8 @@ public class ShipServer extends Server {
             serverSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
+        }finally {
+            Logger.info("ShipServer closed");
         }
     }
 

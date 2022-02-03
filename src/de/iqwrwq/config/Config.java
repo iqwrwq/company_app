@@ -14,6 +14,7 @@ public class Config extends Properties {
     public String companyName;
     public int maxShips;
     public String[] harbours;
+    public boolean massMove;
 
     public Config(@NotNull String path) {
         try {
@@ -24,6 +25,7 @@ public class Config extends Properties {
             this.companyName = getProperty("companyName");
             this.maxShips =  getProperty("maxShipsAllowed").isEmpty() ? 999 : Integer.parseInt(getProperty("maxShipsAllowed"));
             this.harbours = getProperty("harbours").split(",");
+            this.massMove = Boolean.parseBoolean(getProperty("massMove"));
         } catch (IOException e) {
             e.printStackTrace();
         }

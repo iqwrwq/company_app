@@ -16,7 +16,7 @@ public class ShipThread extends ShipHandler {
 
     public Harbour harbour;
     public Cargo cargo;
-    private final int id;
+    public final int id;
     public CommunicationHandler communicationHandler;
 
     public ShipThread(int id, @NotNull Socket socket, Kernel core) {
@@ -31,7 +31,9 @@ public class ShipThread extends ShipHandler {
 
     @Override
     public void registerShip(Command registerShip) {
-        this.harbour = core.shipServer.getHarbour();
+        Harbour harbour = core.shipServer.getHarbour();
+        harbour.ships.add(this);
+        this.harbour = harbour;
         communicationHandler.notifyServer("registered" + req.SEPARATOR + id + req.DIVIDER + harbour.name + req.DIVIDER + core.company.companyName);
     }
 
@@ -43,8 +45,15 @@ public class ShipThread extends ShipHandler {
 
     @Override
     public void setCargo(@NotNull Command setCargo) {
-        int cargoIndex = 1;
+        int cargoIndex = 2;
+
         this.cargo = new Cargo(setCargo.arguments.get(cargoIndex));
+    }
+
+    @Override
+    public void unloadCargo() {
+        core.shipServer.cargos.removeIf(cargo -> cargo.id == this.cargo.id);
+        this.cargo = null;
     }
 
     @Override
@@ -53,7 +62,28 @@ public class ShipThread extends ShipHandler {
     }
 
     @Override
+    public void setHarbour(Command setHarbour) {
+        int destinationHarbourIndex = 1;
+        harbour.ships.remove(this);
+
+        for (Harbour harbour : core.shipServer.harbours) {
+            if (harbour.name.equals(setHarbour.arguments.get(destinationHarbourIndex))) {
+                this.harbour = harbour;
+                harbour.ships.add(this);
+            }
+        }
+    }
+
+    @Override
     public @NotNull String[] getInfo() {
-        return new String[]{"Ship", String.valueOf(id), (cargo == null ? "no Cargo" : String.valueOf(cargo.id)), harbour.name};
+        return new String[]{
+                "Ship",
+                String.valueOf(id),
+                (cargo == null ?
+                        "no Cargo" :
+                        cargo.getObjString()
+                ),
+                harbour.name
+        };
     }
 }

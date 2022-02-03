@@ -2,9 +2,11 @@ package de.iqwrwq.client;
 
 import de.iqwrwq.core.Kernel;
 import de.iqwrwq.server.objects.Cargo;
+import de.iqwrwq.server.objects.Harbour;
 import de.iqwrwq.ui.CommunicationHandler;
 import de.iqwrwq.ui.req;
 import org.jetbrains.annotations.NotNull;
+import org.tinylog.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -51,6 +53,11 @@ public class Company extends Client {
             case "newCargo" -> {
                 Cargo cargo = new Cargo(request);
                 addCargo(cargo, "addedCargo");
+                for (Harbour harbour : core.shipServer.harbours){
+                    if (harbour.name.equals(cargo.source.name)){
+                        harbour.cargos.add(cargo);
+                    }
+                }
             }
             case "cargo" -> listCargos(request);
             default -> communicationHandler.notifyApp("unhandledRequestAbove", "\u001B[33m");
@@ -82,6 +89,7 @@ public class Company extends Client {
     @Override
     protected void reconnect() {
         try {
+            Logger.warn("Reconnection");
             CommunicationHandler.forceMessage(companyName, "Error" + req.SEPARATOR + "ConnectionRefused");
             CommunicationHandler.forceMessage(companyName, "RetryAfterWait" + req.DIVIDER + core.config.getProperty("ReconnectionTimeGap"));
             sleep(Integer.parseInt(core.config.getProperty("ReconnectionTimeGap")));
@@ -98,10 +106,14 @@ public class Company extends Client {
 
     public void exit() {
         try {
-            communicationHandler.notifyAll("exit");
-            this.toServerSocket.close();
+            if (toServerSocket != null) {
+                communicationHandler.notifyAll("exit");
+                this.toServerSocket.close();
+            }
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            Logger.info("Company exited");
         }
     }
 
@@ -111,8 +123,8 @@ public class Company extends Client {
     }
 
     /**
-     * @implSpec for Dev
      * @return Random ship
+     * @implSpec for Dev
      */
     private @NotNull String randomCompany() {
         return core.config.companyName + (int) (Math.random() * (999 - 1 + 1) + 1);

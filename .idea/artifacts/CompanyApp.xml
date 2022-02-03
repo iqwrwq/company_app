@@ -1,5 +1,5 @@
 <component name="ArtifactManager">
-  <artifact name="CompanyApp">
+  <artifact build-on-make="true" name="CompanyApp">
     <output-path>$PROJECT_DIR$/out/artifacts/CompanyApp</output-path>
     <root id="root">
       <element id="archive" name="CompanyApp.jar">
