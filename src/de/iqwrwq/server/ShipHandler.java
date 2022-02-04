@@ -53,8 +53,7 @@ public abstract class ShipHandler extends Thread {
                 case "unload" -> unloadCargo();
                 case "remove" -> removeShip();
                 case "reach" -> setHarbour(shipRequest);
-                default -> {
-                }
+                case "error:" -> notifyError(shipRequest);
             }
         }
     }
@@ -70,6 +69,8 @@ public abstract class ShipHandler extends Thread {
     public abstract void removeShip() throws IOException;
 
     public abstract void setHarbour(Command setHarbour);
+
+    public abstract void notifyError(Command error);
 
     public abstract @NotNull String[] getInfo();
 }

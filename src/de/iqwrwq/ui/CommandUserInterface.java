@@ -28,16 +28,16 @@ public class CommandUserInterface extends UserInterface {
     protected void handleCommand(@NotNull String command) {
         switch (command.split(" ")[0]) {
             case "cargos" -> listCargo();
-            case "move" -> moveShip(command);
+            case "move", "m" -> moveShip(command);
             case "load" -> loadShip(command);
             case "unload" -> shipServerRequired(command, "unload");
             case "ships" -> listAllShips();
             case "estate" -> printEstate();
-            case "harbours" -> listHarbours();
+            case "harbours", "ls" -> listHarbours();
             case "sync" -> syncAllCargos();
-            case "massmove" -> massMove();
+            case "massmove", "mm" -> massMove();
             case "massunload" -> massUnload();
-            case "help" -> listCommands();
+            case "help", "?" -> listCommands();
             default -> CommunicationHandler.forceMessage(INSTANCE_NAME, "unhandledCommand");
         }
     }

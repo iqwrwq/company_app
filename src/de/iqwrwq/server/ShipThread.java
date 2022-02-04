@@ -47,13 +47,22 @@ public class ShipThread extends ShipHandler {
     @Override
     public void setCargo(@NotNull Command setCargo) {
         int cargoIndex = 2;
-        this.cargo = new Cargo(setCargo.arguments.get(cargoIndex));
+        int cargoSpaceIndex = 3;
+        String cargoInfo = setCargo.arguments.size() == 4 ? setCargo.arguments.get(cargoIndex) + " " + setCargo.arguments.get(cargoSpaceIndex) : setCargo.arguments.get(cargoIndex);
+
+        this.cargo = new Cargo(cargoInfo);
+        core.shipServer.cargos.removeIf(cargo -> cargo.id == this.cargo.id);
+        core.shipServer.harbours.forEach((harbour) -> {
+            if (harbour.name.equals(cargo.source.name)) {
+                harbour.cargos.removeIf((cargo1) -> cargo1.id == cargo.id);
+            }
+        });
+
         communicationHandler.notifyApp("loadedCargo" + req.SEPARATOR + cargo.getObjString());
     }
 
     @Override
     public void unloadCargo() {
-        core.shipServer.cargos.removeIf(cargo -> cargo.id == this.cargo.id);
         this.cargo = null;
     }
 
@@ -64,20 +73,28 @@ public class ShipThread extends ShipHandler {
 
     @Override
     public void setHarbour(Command setHarbour) {
-        int destinationHarbourIndex = 1;
-        int destinationHarbourSpaceIndex = 2;
+        int destinationHarbourIndex = 2;
+        int destinationHarbourSpaceIndex = 3;
         ArrayList<String> command = setHarbour.arguments;
 
         harbour.ships.remove(this);
+        //command.forEach(System.out::println);
 
         for (Harbour harbour : core.shipServer.harbours) {
 
-            if (harbour.name.equals(command.size() == 3 ? command.get(destinationHarbourIndex) + " " + command.get(destinationHarbourSpaceIndex) : command.get(destinationHarbourIndex))) {
+            if (harbour.name.equals(command.size() == 4 ? command.get(destinationHarbourIndex) + " " + command.get(destinationHarbourSpaceIndex) : command.get(destinationHarbourIndex))) {
                 this.harbour = harbour;
                 harbour.ships.add(this);
             }
         }
         communicationHandler.notifyApp("reachedAndSetHarbour" + req.SEPARATOR + harbour.name);
+    }
+
+    @Override
+    public void notifyError(Command error){
+        int errorTextIndex = 1;
+
+        communicationHandler.notifyApp("Error" + req.SEPARATOR + error.arguments.get(errorTextIndex), "\u001B[31m");
     }
 
     @Override
