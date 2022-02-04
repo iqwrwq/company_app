@@ -34,6 +34,8 @@ public class CommandUserInterface extends UserInterface {
             case "ships" -> listAllShips();
             case "estate" -> printEstate();
             case "harbours" -> listHarbours();
+            case "sync" -> syncAllCargos();
+            case "ping" -> shipServer.removeInactive();
             case "massmove" -> massMove();
             case "massunload" -> massUnload();
         }
@@ -43,7 +45,7 @@ public class CommandUserInterface extends UserInterface {
         if (core.shipServer.cargos.isEmpty()) {
             CommunicationHandler.forceMessage(ShipServer.INSTANCE_NAME, "Error" + req.SEPARATOR + "HasNoCargo");
         } else {
-            String[] tableHeaders = {"ID", "Source Harbour", "Destination Harbour", "Value"};
+            String[] tableHeaders = {"ID", "Source Harbour", "Destination Harbour", "Value", String.valueOf(core.shipServer.cargos.size())};
             String[][] tableData = new String[core.shipServer.cargos.size()][];
             var Referral = new Object() {
                 int counter = 0;
@@ -66,10 +68,12 @@ public class CommandUserInterface extends UserInterface {
                 CommunicationHandler.forceMessage(ShipServer.INSTANCE_NAME, "Error" + req.SEPARATOR + "InvalidShipId", "\033[33m");
             } else {
                 int destinationHarbourIndex = 2;
+                String[] to = command.split(req.SEPARATOR)[0].split(Pattern.quote(" "));
+
 
                 core.shipServer.move(
                         Integer.parseInt(moveCommand[shipIdIndex]),
-                        command.split(req.SEPARATOR)[0].split(Pattern.quote(" "))[destinationHarbourIndex]
+                        to.length == 4 ? to[2] + " " + to[3] : to[2]
                 );
             }
         } catch (Exception e) {
@@ -112,7 +116,7 @@ public class CommandUserInterface extends UserInterface {
 
     private void listAllShips() {
         if (!core.shipServer.shipConnectionMap.isEmpty()) {
-            String[] tableHeaders = {"Name", "ID", "Cargo", "Harbour"};
+            String[] tableHeaders = {"Name", "ID", "Cargo", "Harbour", String.valueOf(core.shipServer.shipConnectionMap.size())};
             String[][] tableData = new String[core.shipServer.shipConnectionMap.size()][];
             var Referral = new Object() {
                 int counter = 0;
@@ -138,7 +142,7 @@ public class CommandUserInterface extends UserInterface {
     }
 
     private void listHarbours() {
-        String[] tableHeaders = {"Name", "Ships", "Cargos"};
+        String[] tableHeaders = {"Name", "Ships", "Cargos", String.valueOf(core.shipServer.harbours.size())};
         String[][] tableData = new String[core.shipServer.harbours.size()][];
         var Referral = new Object() {
             int counter = 0;
@@ -149,6 +153,11 @@ public class CommandUserInterface extends UserInterface {
             Referral.counter++;
         });
         ASCIITable.getInstance().printTable(tableHeaders, tableData);
+    }
+
+    private void syncAllCargos() {
+        company.communicationHandler.notifyApp("SyncStarted");
+        company.communicationHandler.notifyServer("getinfo:cargo");
     }
 
     private void massMove() {

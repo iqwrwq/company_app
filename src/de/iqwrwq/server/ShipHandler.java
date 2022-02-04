@@ -8,16 +8,19 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.regex.Pattern;
 
 public abstract class ShipHandler extends Thread {
 
+    protected boolean isActive;
     protected Socket socket;
     protected Kernel core;
 
     public ShipHandler(Socket socket, Kernel core) {
         this.socket = socket;
         this.core = core;
+        this.isActive = true;
     }
 
     @Override
@@ -42,7 +45,8 @@ public abstract class ShipHandler extends Thread {
         while (bufferedReader.ready()) {
             String[] parts = bufferedReader.readLine().split(Pattern.quote(" "));
             shipRequest = new Command(parts[0], parts);
-
+            //System.out.println(shipRequest.header);
+            //Arrays.stream(parts).forEach(System.out::println);
             switch (shipRequest.header) {
                 case "register" -> registerShip(shipRequest);
                 case "charge" -> chargeCompany(shipRequest);
@@ -50,6 +54,11 @@ public abstract class ShipHandler extends Thread {
                 case "unload" -> unloadCargo();
                 case "remove" -> removeShip();
                 case "reach" -> setHarbour(shipRequest);
+                case "active" -> {
+                    System.out.println("isActive");
+                    this.isActive = true;
+                }
+
                 default -> {}
             }
         }

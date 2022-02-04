@@ -14,6 +14,8 @@ public class Config extends Properties {
     public String companyName;
     public int maxShips;
     public String[] harbours;
+    public boolean initialAutoSync;
+    public boolean muteSync;
     public boolean massMove;
 
     public Config(@NotNull String path) {
@@ -25,6 +27,8 @@ public class Config extends Properties {
             this.companyName = getProperty("companyName");
             this.maxShips =  getProperty("maxShipsAllowed").isEmpty() ? 999 : Integer.parseInt(getProperty("maxShipsAllowed"));
             this.harbours = getProperty("harbours").split(",");
+            this.initialAutoSync = Boolean.parseBoolean(getProperty("initialAutoSync"));
+            this.muteSync = Boolean.parseBoolean(getProperty("muteSync"));
             this.massMove = Boolean.parseBoolean(getProperty("massMove"));
         } catch (IOException e) {
             e.printStackTrace();

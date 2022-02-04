@@ -26,7 +26,6 @@ public abstract class Client extends Thread {
         try {
             launch();
         } catch (IOException e) {
-            System.out.println("error");
             reconnect();
         } finally {
             CommunicationHandler.forceMessage(this.getClass().getName(), "ConnectionToSeaTradeEnded" + req.DIVIDER + "✔", "\u001B[33m");
