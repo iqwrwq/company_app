@@ -26,6 +26,7 @@ public class Kernel {
 
     public void boot() {
         try {
+            if (config.welcomeMessage) welcomeMessage();
             company.start();
             shipServer.start();
             userInterface.start();
@@ -33,6 +34,23 @@ public class Kernel {
         } finally {
             Logger.info("Core booted");
         }
+    }
+
+    private void welcomeMessage() {
+        System.out.println("\u001B[34m ________  ________  _____ ______   ________  ________  ________       ___    ___  \u001B[0m");
+        System.out.println("\u001B[34m|\\   ____\\|\\   __  \\|\\   _ \\  _   \\|\\   __  \\|\\   __  \\|\\   ___  \\    |\\  \\  /  /|  \u001B[0m");
+        System.out.println("\u001B[34m\\ \\  \\___|\\ \\  \\|\\  \\ \\  \\\\\\__\\ \\  \\ \\  \\|\\  \\ \\  \\|\\  \\ \\  \\\\ \\  \\   \\ \\  \\/  / /  \u001B[0m");
+        System.out.println("\u001B[36m \\ \\  \\    \\ \\  \\\\\\  \\ \\  \\\\|__| \\  \\ \\   ____\\ \\   __  \\ \\  \\\\ \\  \\   \\ \\    / /   \u001B[0m");
+        System.out.println("\u001B[36m  \\ \\  \\____\\ \\  \\\\\\  \\ \\  \\    \\ \\  \\ \\  \\___|\\ \\  \\ \\  \\ \\  \\\\ \\  \\   \\/  /  /    \u001B[0m");
+        System.out.println("\u001B[36m   \\ \\_______\\ \\_______\\ \\__\\    \\ \\__\\ \\__\\    \\ \\__\\ \\__\\ \\__\\\\ \\__\\__/  / /      \u001B[0m");
+        System.out.println("\u001B[34m    \\|_______|\\|_______|\\|__|     \\|__|\\|__|     \\|__|\\|__|\\|__| \\|__|\\___/ /       \u001B[0m");
+        System.out.println("\u001B[36m ________  ________  ________        ___      ___  _____      ________|________     \u001B[0m");
+        System.out.println("\u001B[36m|\\   __  \\|\\   __  \\|\\   __  \\      |\\  \\    /  /|/ __  \\    |\\   __  \\  / __  \\    \u001B[0m");
+        System.out.println("\u001B[36m \\ \\   __  \\ \\   ____\\ \\   ____\\     \\ \\  \\/  / /\\|/ \\ \\  \\   \\ \\  \\\\\\  \\|/ \\ \\  \\  \u001B[0m");
+        System.out.println("\u001B[34m  \\ \\  \\ \\  \\ \\  \\___|\\ \\  \\___|      \\ \\    / /__    \\ \\  \\ __\\ \\  \\\\\\  \\   \\ \\  \\ \u001B[0m");
+        System.out.println("\u001B[34m   \\ \\__\\ \\__\\ \\__\\    \\ \\__\\          \\ \\__/ /\\__\\    \\ \\__\\\\__\\ \\_______\\   \\ \\__\\\u001B[0m");
+        System.out.println("\u001B[36m    \\|__|\\|__|\\|__|     \\|__|           \\|__|/\\|__|     \\|__\\|__|\\|_______|    \\|__|\u001B[0m");
+        System.out.println("                                                                                    ");
     }
 
     public static void main(String[] args) {
