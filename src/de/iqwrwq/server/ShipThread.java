@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class ShipThread extends ShipHandler {
 
@@ -46,8 +47,8 @@ public class ShipThread extends ShipHandler {
     @Override
     public void setCargo(@NotNull Command setCargo) {
         int cargoIndex = 2;
-
         this.cargo = new Cargo(setCargo.arguments.get(cargoIndex));
+        communicationHandler.notifyApp("loadedCargo" + req.SEPARATOR + cargo.getObjString());
     }
 
     @Override
@@ -64,14 +65,19 @@ public class ShipThread extends ShipHandler {
     @Override
     public void setHarbour(Command setHarbour) {
         int destinationHarbourIndex = 1;
+        int destinationHarbourSpaceIndex = 2;
+        ArrayList<String> command = setHarbour.arguments;
+
         harbour.ships.remove(this);
 
         for (Harbour harbour : core.shipServer.harbours) {
-            if (harbour.name.equals(setHarbour.arguments.get(destinationHarbourIndex))) {
+
+            if (harbour.name.equals(command.size() == 3 ? command.get(destinationHarbourIndex) + " " + command.get(destinationHarbourSpaceIndex) : command.get(destinationHarbourIndex))) {
                 this.harbour = harbour;
                 harbour.ships.add(this);
             }
         }
+        communicationHandler.notifyApp("reachedAndSetHarbour" + req.SEPARATOR + harbour.name);
     }
 
     @Override

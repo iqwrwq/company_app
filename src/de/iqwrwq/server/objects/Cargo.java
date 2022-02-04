@@ -17,7 +17,6 @@ public class Cargo {
         int dest_harbour = 3;
         int value = 4;
 
-        System.out.println(cargo);
         String[] cargo_parts = cargo.split(Pattern.quote("|"));
         this.id = Integer.parseInt(cargo_parts[id]);
         this.source = new Harbour(cargo_parts[source_harbour]);

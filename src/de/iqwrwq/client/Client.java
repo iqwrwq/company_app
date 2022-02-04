@@ -35,9 +35,11 @@ public abstract class Client extends Thread {
     private void launch() throws IOException {
         int maxConnectionAttempts = Integer.parseInt(core.config.getProperty("ConnectionAttempts"));
         for (int connectionAttempt = 0; connectionAttempt <= maxConnectionAttempts; connectionAttempt++) {
-            this.toServerSocket = connect();
-            register();
-            process();
+            if (toServerSocket == null) {
+                this.toServerSocket = connect();
+                register();
+                process();
+            }
         }
     }
 

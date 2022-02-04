@@ -38,7 +38,7 @@ public class Company extends Client {
 
         while (bufferedReader.ready()) {
             serverAnswer = bufferedReader.readLine();
-            communicationHandler.notifyApp(serverAnswer);
+            if (!core.config.muteSync) communicationHandler.notifyApp(serverAnswer);
             handle(serverAnswer);
         }
     }
@@ -49,18 +49,21 @@ public class Company extends Client {
             case "registered" -> {
                 setEstate(Integer.parseInt(request.split(":")[2]));
                 communicationHandler.notifyApp("registeredOnSeaTrade" + req.DIVIDER + "Port" + req.SEPARATOR + core.config.port, "\u001B[32m");
+                if (core.config.initialAutoSync) {
+                    communicationHandler.notifyServer("getinfo:cargo");
+                    communicationHandler.notifyApp("SyncedAllCargos", "\u001B[32m");
+                }
             }
             case "newCargo" -> {
                 Cargo cargo = new Cargo(request);
-                addCargo(cargo, "addedCargo");
-                for (Harbour harbour : core.shipServer.harbours){
-                    if (harbour.name.equals(cargo.source.name)){
+                addCargo(cargo);
+                for (Harbour harbour : core.shipServer.harbours) {
+                    if (harbour.name.equals(cargo.source.name)) {
                         harbour.cargos.add(cargo);
                     }
                 }
             }
             case "cargo" -> listCargos(request);
-            default -> communicationHandler.notifyApp("unhandledRequestAbove", "\u001B[33m");
         }
     }
 
@@ -73,7 +76,7 @@ public class Company extends Client {
                 }
             }
         }
-        addCargo(suspectedNewCargo, "addedUnknownCargo");
+        addCargo(suspectedNewCargo);
     }
 
     @Override
@@ -117,8 +120,12 @@ public class Company extends Client {
         }
     }
 
-    private void addCargo(@NotNull Cargo suspectedNewCargo, String addedUnknownCargo) {
-        communicationHandler.notifyApp(addedUnknownCargo + req.DIVIDER + suspectedNewCargo.id);
+    private void addCargo(@NotNull Cargo suspectedNewCargo) {
+        for (Harbour harbour : core.shipServer.harbours){
+            if (harbour.name.equals(suspectedNewCargo.source.name)){
+                harbour.cargos.add(suspectedNewCargo);
+            }
+        }
         core.shipServer.cargos.add(suspectedNewCargo);
     }
 

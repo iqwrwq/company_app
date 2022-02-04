@@ -16,6 +16,8 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 
@@ -85,7 +87,7 @@ public class ShipServer extends Server {
             serverSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             Logger.info("ShipServer closed");
         }
     }

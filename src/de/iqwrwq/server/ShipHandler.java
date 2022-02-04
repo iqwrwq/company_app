@@ -8,16 +8,19 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.regex.Pattern;
 
 public abstract class ShipHandler extends Thread {
 
+    protected boolean isActive;
     protected Socket socket;
     protected Kernel core;
 
     public ShipHandler(Socket socket, Kernel core) {
         this.socket = socket;
         this.core = core;
+        this.isActive = true;
     }
 
     @Override
@@ -50,7 +53,8 @@ public abstract class ShipHandler extends Thread {
                 case "unload" -> unloadCargo();
                 case "remove" -> removeShip();
                 case "reach" -> setHarbour(shipRequest);
-                default -> {}
+                default -> {
+                }
             }
         }
     }
