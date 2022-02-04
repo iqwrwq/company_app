@@ -45,8 +45,7 @@ public abstract class ShipHandler extends Thread {
         while (bufferedReader.ready()) {
             String[] parts = bufferedReader.readLine().split(Pattern.quote(" "));
             shipRequest = new Command(parts[0], parts);
-            //System.out.println(shipRequest.header);
-            //Arrays.stream(parts).forEach(System.out::println);
+
             switch (shipRequest.header) {
                 case "register" -> registerShip(shipRequest);
                 case "charge" -> chargeCompany(shipRequest);
@@ -54,12 +53,8 @@ public abstract class ShipHandler extends Thread {
                 case "unload" -> unloadCargo();
                 case "remove" -> removeShip();
                 case "reach" -> setHarbour(shipRequest);
-                case "active" -> {
-                    System.out.println("isActive");
-                    this.isActive = true;
+                default -> {
                 }
-
-                default -> {}
             }
         }
     }

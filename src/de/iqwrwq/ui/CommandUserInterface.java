@@ -35,7 +35,6 @@ public class CommandUserInterface extends UserInterface {
             case "estate" -> printEstate();
             case "harbours" -> listHarbours();
             case "sync" -> syncAllCargos();
-            case "ping" -> shipServer.removeInactive();
             case "massmove" -> massMove();
             case "massunload" -> massUnload();
         }

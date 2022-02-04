@@ -92,12 +92,6 @@ public class ShipServer extends Server {
         }
     }
 
-    public void removeInactive() {
-        for (Map.Entry<Integer, ShipThread> entry : shipConnectionMap.entrySet()) {
-            entry.getValue().ping();
-        }
-    }
-
     private void handleUpcomingShipConnections(@NotNull ServerSocket serverSocket) throws IOException {
         try {
             Socket shipSocket = serverSocket.accept();

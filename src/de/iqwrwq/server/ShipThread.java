@@ -12,8 +12,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Map;
 
 public class ShipThread extends ShipHandler {
 
@@ -80,42 +78,6 @@ public class ShipThread extends ShipHandler {
             }
         }
         communicationHandler.notifyApp("reachedAndSetHarbour" + req.SEPARATOR + harbour.name);
-    }
-
-    public void ping() {
-        ShipThread s = this;
-        communicationHandler.notifyServer("ping");
-
-        try {
-            Thread t = new Thread(){
-
-                private final ShipThread ss = s;
-
-                @Override
-                public void run() {
-                    try{
-                        communicationHandler.notifyApp("checkingConnection");
-                        sleep(5000);
-                        if (!isActive) {
-                            core.shipServer.harbours.forEach((harbour) -> {
-                                harbour.ships.removeIf(shipThread1 -> shipThread1.equals(s));
-                            });
-                            communicationHandler.notifyApp("removedDueToDisconnect");
-                        }
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
-                }
-            };
-            t.start();
-            this.isActive = false;
-
-            if (!isActive){
-                this.socket.close();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
