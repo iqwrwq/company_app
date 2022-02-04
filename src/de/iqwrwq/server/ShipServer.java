@@ -83,7 +83,7 @@ public class ShipServer extends Server {
     @Override
     public void exit() {
         try {
-            shipConnectionMap.forEach((id, ship) -> ship.communicationHandler.notifyAll("removed"));
+            shipConnectionMap.forEach((id, ship) -> ship.removeShip());
             serverSocket.close();
         } catch (IOException e) {
             e.printStackTrace();

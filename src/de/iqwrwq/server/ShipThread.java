@@ -67,8 +67,11 @@ public class ShipThread extends ShipHandler {
     }
 
     @Override
-    public void removeShip() throws IOException {
-        socket.close();
+    public void removeShip() {
+        try {
+            communicationHandler.notifyAll("removed");
+            socket.close();
+        } catch (Exception ignored) {}
     }
 
     @Override
@@ -91,7 +94,7 @@ public class ShipThread extends ShipHandler {
     }
 
     @Override
-    public void notifyError(Command error){
+    public void notifyError(Command error) {
         int errorTextIndex = 1;
 
         communicationHandler.notifyApp("Error" + req.SEPARATOR + error.arguments.get(errorTextIndex), "\u001B[31m");
