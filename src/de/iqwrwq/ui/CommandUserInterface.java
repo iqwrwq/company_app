@@ -37,6 +37,8 @@ public class CommandUserInterface extends UserInterface {
             case "sync" -> syncAllCargos();
             case "massmove" -> massMove();
             case "massunload" -> massUnload();
+            case "help" -> listCommands();
+            default -> CommunicationHandler.forceMessage(INSTANCE_NAME, "unhandledCommand");
         }
     }
 
@@ -192,6 +194,57 @@ public class CommandUserInterface extends UserInterface {
         } else {
             CommunicationHandler.forceMessage(ShipServer.INSTANCE_NAME, "massMoveDeactivated");
         }
+    }
+
+    private void listCommands() {
+        String[] tableHeaders = {"Command", "Info"};
+        String[][] tableData = new String[][]{
+                {
+                        "cargos",
+                        "Display all cargos as a table"
+                },
+                {
+                        "harbours",
+                        "Display all harbours, with its ships and cargos as a table"
+                },
+                {
+                        "ships",
+                        "Display all ships as a table"
+                },
+                {
+                        "sync",
+                        "Manually synchronize all cargos to the application"
+                },
+                {
+                        "estate",
+                        "print out the estate of the company"
+                },
+                {
+                        "move {SHIP_ID}" + "{HARBOUR_NAME}",
+                        "move the ship with {SHIP_ID} to {HARBOUR_NAME}"
+                },
+                {
+                        "load {SHIP_ID}",
+                        "load a cargo to the ship with the id {SHIP_ID}"
+                },
+                {
+                        "unload {SHIP_ID}",
+                        "unload the cargo from {SHIP_ID}"
+                },
+                {
+                        "exit",
+                        "End the Application"
+                },
+                {
+                        "massmove",
+                        "EXPERIMENTAL! Move all ships that are currently on a harbour containing a cargo to the destination. Loads the cargo to the ship and moves it"
+                },
+                {
+                        "massunload",
+                        "EXPERIMENTAL! Unload all ships that are loaded with a cargo and at it's destination harbour"
+                }
+        };
+        ASCIITable.getInstance().printTable(tableHeaders, tableData);
     }
 
     protected void endApplication() {

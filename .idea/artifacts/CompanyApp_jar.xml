@@ -1,0 +1,12 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="CompanyApp:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/CompanyApp_jar</output-path>
+    <root id="archive" name="CompanyApp.jar">
+      <element id="module-output" name="CompanyApp" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/tinylog-impl-2.4.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/tinylog-api-2.4.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/btc-ascii-table-1.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/annotations-20.1.0.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
