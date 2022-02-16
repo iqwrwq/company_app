@@ -19,6 +19,7 @@ public class ShipThread extends ShipHandler {
     public Cargo cargo;
     public final int id;
     public CommunicationHandler communicationHandler;
+    public boolean isMoving;
 
     public ShipThread(int id, @NotNull Socket socket, Kernel core) {
         super(socket, core);
@@ -28,6 +29,7 @@ public class ShipThread extends ShipHandler {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        this.isMoving = false;
     }
 
     @Override
@@ -71,7 +73,8 @@ public class ShipThread extends ShipHandler {
         try {
             communicationHandler.notifyAll("removed");
             socket.close();
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
     }
 
     @Override
@@ -81,7 +84,7 @@ public class ShipThread extends ShipHandler {
         ArrayList<String> command = setHarbour.arguments;
 
         harbour.ships.remove(this);
-        //command.forEach(System.out::println);
+        isMoving = false;
 
         for (Harbour harbour : core.shipServer.harbours) {
 
@@ -91,6 +94,10 @@ public class ShipThread extends ShipHandler {
             }
         }
         communicationHandler.notifyApp("reachedAndSetHarbour" + req.SEPARATOR + harbour.name);
+    }
+
+    public void setIsMoving() {
+        isMoving = true;
     }
 
     @Override

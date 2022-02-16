@@ -1,10 +1,4 @@
-2022-02-04 22:40:12 [main] de.iqwrwq.core.Kernel.<init>()
+2022-02-16 17:02:15 [main] de.iqwrwq.core.Kernel.<init>()
 INFO: Core created
-2022-02-04 22:40:12 [main] de.iqwrwq.core.Kernel.boot()
+2022-02-16 17:02:15 [main] de.iqwrwq.core.Kernel.boot()
 INFO: Core booted
-2022-02-04 22:46:03 [Thread-2] de.iqwrwq.client.Company.exit()
-INFO: Company exited
-2022-02-04 22:46:03 [Thread-2] de.iqwrwq.server.ShipServer.exit()
-INFO: ShipServer closed
-2022-02-04 22:46:03 [Thread-2] de.iqwrwq.ui.CommandUserInterface.endApplication()
-INFO: Interface exited

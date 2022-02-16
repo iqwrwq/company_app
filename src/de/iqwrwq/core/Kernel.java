@@ -1,5 +1,6 @@
 package de.iqwrwq.core;
 
+import de.iqwrwq.auto.AutoApplicationBot;
 import de.iqwrwq.client.Company;
 import de.iqwrwq.config.Config;
 import de.iqwrwq.server.ShipServer;
@@ -14,13 +15,13 @@ public class Kernel {
     public final @NotNull Config config;
     public final @NotNull Company company;
     public final @NotNull ShipServer shipServer;
-    public final @NotNull CommandUserInterface userInterface;
+    public CommandUserInterface userInterface;
+    public AutoApplicationBot autoApplicationBot;
 
     public Kernel() {
         this.config = new Config("config/config.properties");
         this.company = new Company(this);
         this.shipServer = new ShipServer(this);
-        this.userInterface = new CommandUserInterface(this);
         Logger.info("Core created");
     }
 
@@ -29,7 +30,6 @@ public class Kernel {
             if (config.welcomeMessage) welcomeMessage();
             company.start();
             shipServer.start();
-
             startApplicationMode();
         } catch (Exception ignored) {
         } finally {
@@ -39,26 +39,31 @@ public class Kernel {
 
     private void startApplicationMode() {
         if (!config.fullAutoMode){
+            this.userInterface = new CommandUserInterface(this);
             userInterface.start();
         }else{
-            
+            this.autoApplicationBot = new AutoApplicationBot(this);
+            autoApplicationBot.start();
         }
     }
 
     private void welcomeMessage() {
-        System.out.println("\u001B[34m ________  ________  _____ ______   ________  ________  ________       ___    ___  \u001B[0m");
-        System.out.println("\u001B[34m|\\   ____\\|\\   __  \\|\\   _ \\  _   \\|\\   __  \\|\\   __  \\|\\   ___  \\    |\\  \\  /  /|  \u001B[0m");
-        System.out.println("\u001B[34m\\ \\  \\___|\\ \\  \\|\\  \\ \\  \\\\\\__\\ \\  \\ \\  \\|\\  \\ \\  \\|\\  \\ \\  \\\\ \\  \\   \\ \\  \\/  / /  \u001B[0m");
+        System.out.println("\u001B[35m ________  ________  _____ ______   ________  ________  ________       ___    ___  \u001B[0m");
+        System.out.println("\u001B[35m|\\   ____\\|\\   __  \\|\\   _ \\  _   \\|\\   __  \\|\\   __  \\|\\   ___  \\    |\\  \\  /  /|  \u001B[0m");
+        System.out.println("\u001B[35m\\ \\  \\___|\\ \\  \\|\\  \\ \\  \\\\\\__\\ \\  \\ \\  \\|\\  \\ \\  \\|\\  \\ \\  \\\\ \\  \\   \\ \\  \\/  / /  \u001B[0m");
         System.out.println("\u001B[36m \\ \\  \\    \\ \\  \\\\\\  \\ \\  \\\\|__| \\  \\ \\   ____\\ \\   __  \\ \\  \\\\ \\  \\   \\ \\    / /   \u001B[0m");
         System.out.println("\u001B[36m  \\ \\  \\____\\ \\  \\\\\\  \\ \\  \\    \\ \\  \\ \\  \\___|\\ \\  \\ \\  \\ \\  \\\\ \\  \\   \\/  /  /    \u001B[0m");
         System.out.println("\u001B[36m   \\ \\_______\\ \\_______\\ \\__\\    \\ \\__\\ \\__\\    \\ \\__\\ \\__\\ \\__\\\\ \\__\\__/  / /      \u001B[0m");
-        System.out.println("\u001B[34m    \\|_______|\\|_______|\\|__|     \\|__|\\|__|     \\|__|\\|__|\\|__| \\|__|\\___/ /       \u001B[0m");
-        System.out.println("\u001B[36m ________  ________  ________        ___      ___  _____      ________|________     \u001B[0m");
-        System.out.println("\u001B[36m|\\   __  \\|\\   __  \\|\\   __  \\      |\\  \\    /  /|/ __  \\    |\\   __  \\  / __  \\    \u001B[0m");
-        System.out.println("\u001B[36m \\ \\   __  \\ \\   ____\\ \\   ____\\     \\ \\  \\/  / /\\|/ \\ \\  \\   \\ \\  \\\\\\  \\|/ \\ \\  \\  \u001B[0m");
-        System.out.println("\u001B[34m  \\ \\  \\ \\  \\ \\  \\___|\\ \\  \\___|      \\ \\    / /__    \\ \\  \\ __\\ \\  \\\\\\  \\   \\ \\  \\ \u001B[0m");
-        System.out.println("\u001B[34m   \\ \\__\\ \\__\\ \\__\\    \\ \\__\\          \\ \\__/ /\\__\\    \\ \\__\\\\__\\ \\_______\\   \\ \\__\\\u001B[0m");
-        System.out.println("\u001B[36m    \\|__|\\|__|\\|__|     \\|__|           \\|__|/\\|__|     \\|__\\|__|\\|_______|    \\|__|\u001B[0m");
+        System.out.println("\u001B[35m    \\|_______|\\|_______|\\|__|     \\|__|\\|__|     \\|__|\\|__|\\|__| \\|__|\\___/ /       \u001B[0m");
+
+
+        System.out.println("\u001B[36m ________  ________  ________        ___      ___  _____    _____      ________     \u001B[0m");
+        System.out.println("\u001B[36m|\\   __  \\|\\   __  \\|\\   __  \\      |\\  \\    /  /|/ __  \\  / __  \\    |\\   __  \\    \u001B[0m");
+        System.out.println("\u001B[36m\\ \\  \\|\\  \\ \\  \\|\\  \\ \\  \\|\\  \\     \\ \\  \\  /  / /\\/_|\\  \\|\\/_|\\  \\   \\ \\  \\|\\  \\   \u001B[0m");
+        System.out.println("\u001B[35m \\ \\   __  \\ \\   ____\\ \\   ____\\     \\ \\  \\/  / /\\|/ \\ \\  \\|/ \\ \\  \\   \\ \\  \\\\\\  \\  \u001B[0m");
+        System.out.println("\u001B[35m  \\ \\  \\ \\  \\ \\  \\___|\\ \\  \\___|      \\ \\    / /__    \\ \\  \\ __\\ \\  \\ __\\ \\  \\\\\\  \\ \u001B[0m");
+        System.out.println("\u001B[36m   \\ \\__\\ \\__\\ \\__\\    \\ \\__\\          \\ \\__/ /\\__\\    \\ \\__\\\\__\\ \\__\\\\__\\ \\_______\\\u001B[0m");
+        System.out.println("\u001B[36m    \\|__|\\|__|\\|__|     \\|__|           \\|__|/\\|__|     \\|__\\|__|\\|__\\|__|\\|_______|\u001B[0m");
         System.out.println("                                                                                    ");
     }
 
