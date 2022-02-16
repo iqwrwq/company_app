@@ -1,5 +1,6 @@
 package de.iqwrwq.core;
 
+import de.iqwrwq.auto.AutoApplicationBot;
 import de.iqwrwq.client.Company;
 import de.iqwrwq.config.Config;
 import de.iqwrwq.server.ShipServer;
@@ -14,13 +15,13 @@ public class Kernel {
     public final @NotNull Config config;
     public final @NotNull Company company;
     public final @NotNull ShipServer shipServer;
-    public final @NotNull CommandUserInterface userInterface;
+    public CommandUserInterface userInterface;
+    public AutoApplicationBot autoApplicationBot;
 
     public Kernel() {
         this.config = new Config("config/config.properties");
         this.company = new Company(this);
         this.shipServer = new ShipServer(this);
-        this.userInterface = new CommandUserInterface(this);
         Logger.info("Core created");
     }
 
@@ -29,7 +30,6 @@ public class Kernel {
             if (config.welcomeMessage) welcomeMessage();
             company.start();
             shipServer.start();
-
             startApplicationMode();
         } catch (Exception ignored) {
         } finally {
@@ -39,9 +39,11 @@ public class Kernel {
 
     private void startApplicationMode() {
         if (!config.fullAutoMode){
+            this.userInterface = new CommandUserInterface(this);
             userInterface.start();
         }else{
-            
+            this.autoApplicationBot = new AutoApplicationBot(this);
+            autoApplicationBot.start();
         }
     }
 
