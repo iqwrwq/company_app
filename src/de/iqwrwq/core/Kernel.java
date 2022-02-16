@@ -29,10 +29,19 @@ public class Kernel {
             if (config.welcomeMessage) welcomeMessage();
             company.start();
             shipServer.start();
-            userInterface.start();
+
+            startApplicationMode();
         } catch (Exception ignored) {
         } finally {
             Logger.info("Core booted");
+        }
+    }
+
+    private void startApplicationMode() {
+        if (!config.fullAutoMode){
+            userInterface.start();
+        }else{
+            
         }
     }
 

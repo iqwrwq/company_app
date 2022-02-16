@@ -18,6 +18,7 @@ public class Config extends Properties {
     public boolean initialAutoSync;
     public boolean muteSync;
     public boolean massMove;
+    public boolean fullAutoMode;
 
     public Config(@NotNull String path) {
         try {
@@ -32,6 +33,7 @@ public class Config extends Properties {
             this.initialAutoSync = Boolean.parseBoolean(getProperty("initialAutoSync"));
             this.muteSync = Boolean.parseBoolean(getProperty("muteSync"));
             this.massMove = Boolean.parseBoolean(getProperty("massMove"));
+            this.fullAutoMode = Boolean.parseBoolean(getProperty("fullAutoMode"));
         } catch (IOException e) {
             e.printStackTrace();
         }
