@@ -1,6 +1,7 @@
 package de.iqwrwq.config;
 
 import org.jetbrains.annotations.NotNull;
+import org.tinylog.Logger;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -35,6 +36,7 @@ public class Config extends Properties {
             this.massMove = Boolean.parseBoolean(getProperty("massMove"));
             this.fullAutoMode = Boolean.parseBoolean(getProperty("fullAutoMode"));
         } catch (IOException e) {
+            Logger.error("Could not load Config file");
             e.printStackTrace();
         }
     }

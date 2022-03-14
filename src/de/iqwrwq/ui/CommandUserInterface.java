@@ -5,7 +5,7 @@ import de.iqwrwq.client.Company;
 import de.iqwrwq.core.Kernel;
 import de.iqwrwq.server.ShipServer;
 import de.iqwrwq.server.ShipThread;
-import de.iqwrwq.server.objects.Cargo;
+import de.iqwrwq.server.entities.Cargo;
 import org.jetbrains.annotations.NotNull;
 import org.tinylog.Logger;
 

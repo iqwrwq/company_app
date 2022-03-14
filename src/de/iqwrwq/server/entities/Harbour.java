@@ -1,7 +1,6 @@
-package de.iqwrwq.server.objects;
+package de.iqwrwq.server.entities;
 
 import de.iqwrwq.server.ShipThread;
-import de.iqwrwq.ui.req;
 
 import java.util.ArrayList;
 

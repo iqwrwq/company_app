@@ -3,10 +3,8 @@ package de.iqwrwq.auto;
 import de.iqwrwq.client.Company;
 import de.iqwrwq.core.Kernel;
 import de.iqwrwq.server.ShipServer;
-import de.iqwrwq.server.objects.Cargo;
+import de.iqwrwq.server.entities.Cargo;
 import de.iqwrwq.ui.req;
-
-import java.util.Scanner;
 
 public class AutoApplicationBot extends Thread {
 
@@ -26,7 +24,8 @@ public class AutoApplicationBot extends Thread {
         var clock = new Object() {
             int timeCache = 5000;
         };
-        while (true) {
+
+        do {
             try {
                 sleep(clock.timeCache);
             } catch (InterruptedException e) {
@@ -59,6 +58,6 @@ public class AutoApplicationBot extends Thread {
                     }
                 });
             }
-        }
+        }while(true);
     }
 }

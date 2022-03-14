@@ -1,8 +1,8 @@
 package de.iqwrwq.client;
 
 import de.iqwrwq.core.Kernel;
-import de.iqwrwq.server.objects.Cargo;
-import de.iqwrwq.server.objects.Harbour;
+import de.iqwrwq.server.entities.Cargo;
+import de.iqwrwq.server.entities.Harbour;
 import de.iqwrwq.ui.CommunicationHandler;
 import de.iqwrwq.ui.req;
 import org.jetbrains.annotations.NotNull;

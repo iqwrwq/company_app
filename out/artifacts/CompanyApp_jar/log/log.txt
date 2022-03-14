@@ -1,4 +1,4 @@
-2022-02-16 17:02:15 [main] de.iqwrwq.core.Kernel.<init>()
+2022-03-14 14:41:08 [main] de.iqwrwq.core.Kernel.<init>()
 INFO: Core created
-2022-02-16 17:02:15 [main] de.iqwrwq.core.Kernel.boot()
+2022-03-14 14:41:08 [main] de.iqwrwq.core.Kernel.boot()
 INFO: Core booted

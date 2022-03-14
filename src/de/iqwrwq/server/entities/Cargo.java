@@ -1,4 +1,4 @@
-package de.iqwrwq.server.objects;
+package de.iqwrwq.server.entities;
 
 import de.iqwrwq.ui.req;
 import org.jetbrains.annotations.NotNull;

@@ -1,9 +1,9 @@
 package de.iqwrwq.server;
 
 import de.iqwrwq.core.Kernel;
-import de.iqwrwq.server.objects.Cargo;
-import de.iqwrwq.server.objects.Harbour;
-import de.iqwrwq.server.objects.Harbours;
+import de.iqwrwq.server.entities.Cargo;
+import de.iqwrwq.server.entities.Harbour;
+import de.iqwrwq.server.entities.Harbours;
 import de.iqwrwq.ui.CommunicationHandler;
 import de.iqwrwq.ui.req;
 import org.jetbrains.annotations.NotNull;
@@ -16,8 +16,6 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 
